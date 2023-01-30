@@ -36,8 +36,8 @@ class Spotify:
         
         return response.json()['access_token']
 
-    def get_tarck(self, link: str) -> dict:
-        track = self.get_spotify_id(link)
+    def get_tarck(self, link = None,track = None) -> dict:
+        if link != None: track = self.get_spotify_id(link)
         url = f"https://api.spotify.com/v1/tracks/{track}"
 
         payload = {}
@@ -58,9 +58,40 @@ class Spotify:
         response = requests.request("GET", url, headers=headers, data=payload)
         return response.json()
 
+
+    def get_album_tarck(self, id: str) -> dict:
+        #track = self.get_spotify_id(link)
+        url = f"https://api.spotify.com/v1/albums/{id}/tracks"
+
+        payload = {}
+        headers = {
+            'authority': 'api.spotify.com',
+            'accept': '*/*',
+            'accept-language': 'en-US,en;q=0.9,ar;q=0.8',
+            'authorization': f'Bearer {self.token}',
+            'content-type': 'application/json',
+            'sec-ch-ua': '".Not/A)Brand";v="99", "Google Chrome";v="103", "Chromium";v="103"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'cross-site',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+        }
+        response = requests.request("GET", url, headers=headers, data=payload)
+        return response.json()["items"][0]["id"]
+
+
     def get_isrc(self,link):
+        
         self.get_token()
-        track = self.get_tarck(link)
+        track = None
+        match = re.search(r'album/(\w+)', link)
+        if match: 
+            track = self.get_album_tarck(match.group(1))
+            link = None
+
+        track = self.get_tarck(link,track)
         if "external_ids" in track:
             return track["external_ids"]["isrc"]
         else:
