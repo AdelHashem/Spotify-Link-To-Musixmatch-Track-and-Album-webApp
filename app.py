@@ -11,6 +11,7 @@ def index():
     if request.method == 'POST':
         link = request.form['link']
         try:
+            if(len(link) < 12): return "Wrong Spotify Link Or Wrong ISRC"
             isrc = sp.get_isrc(link) if len(link) > 12 else link
         except:
             return "Wrong Spotify Link Or Wrong ISRC"
