@@ -8,19 +8,20 @@
     <div class="container">
       <h1>Spotify to Musixmatch Link</h1>
       <form action="/" method="POST">
-        <label for="input_link">Spotify Track Link:</label>
+        <label for="input_link">Spotify Track/Album Link Or ISRC:</label>
         <input type="text" id="input_link" name="link" placeholder="Enter Spotify track link here">
         <button type="submit" id="process_button">Get links</button>
         <div class="loading" id="loading"></div>
       </form>
       <div class="output" id="output">
+        <p id="output_label1">ISRC: {{ isrc }}</p>
         <p id="output_label1">Musixmatch Track ID: {{ id }}</p>
         <p id="output_label2">Musixmatch Track Link: <a href="{{ track_link }}" id="track_link" target="_blank">{{ track_link }}</a></p>
         <p id="output_label3">Musixmatch Album Link: <a href="{{ album_link }}" id="album_link" target="_blank">{{ album_link }}</a></p>
       </div>
     </div>
     <div class="github_link" style="position:absolute; bottom:0; left:0;">
-        <a href="https://github.com/AdelHashem/Spotify-Link-To-Musixmatch-Track-link-and-Album-link-webApp" target="_blank">
+        <a href="https://github.com/yourusername/yourreponame" target="_blank">
           <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/github.svg" alt="GitHub Repo Link" style="width:50px;">
       </a>
     </div>
