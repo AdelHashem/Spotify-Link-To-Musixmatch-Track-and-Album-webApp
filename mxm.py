@@ -1,6 +1,5 @@
 import requests
 
-
 class MXM:
     key = "41b9b3af66092b9d785e30fac520e308"
 
@@ -10,16 +9,24 @@ class MXM:
     def Track_Get(self,isrc) -> dict:
         url = f"http://api.musixmatch.com/ws/1.1/track.get?track_isrc={isrc}&apikey={self.key}"
         response = requests.request("GET", url)
-        if response.status_code == 200: return response.json()
-        elif response.status_code == 401: print("invalid/missing API key")
-        elif response.status_code == 402: print("The usage limit has been reached. Try to use another api key")
-        elif response.status_code == 403: print("You are not authorized to perform this operation")
-        elif response.status_code == 404: print("The requested resource was not found.")
-        else: print("Ops. Something were wrong.")
+        try:
+            status = response.json()
+            status = status["message"]["header"]["status_code"]
+            
+            if status == 200: return response.json()
+            elif status == 401: return "invalid/missing API key"
+            elif status == 402: return "The usage limit has been reached. Try to use another api key"
+            elif status == 403: return "You are not authorized to perform this operation"
+            elif status == 404: return "The requested resource was not found.</br>The Track isn't imported yet." 
+        except:
+            return "Error in MXM API "
 
     def Track_links(self,isrc):
         track = self.Track_Get(isrc)
-        id = track["message"]["body"]["track"]["commontrack_id"]
+        try:
+            id = track["message"]["body"]["track"]["commontrack_id"]
+        except TypeError:
+            return track
         track_url = track["message"]["body"]["track"]["track_share_url"]
         album_id = track["message"]["body"]["track"]["album_id"]
         album_url = f"https://www.musixmatch.com/album/id/{album_id}"
