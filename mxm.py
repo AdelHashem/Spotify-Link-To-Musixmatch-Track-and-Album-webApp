@@ -17,7 +17,7 @@ class MXM:
             elif status == 401: return "invalid/missing API key"
             elif status == 402: return "The usage limit has been reached. Try to use another api key"
             elif status == 403: return "You are not authorized to perform this operation"
-            elif status == 404: return "The requested resource was not found.</br>The Track isn't imported yet." 
+            elif status == 404: return "The requested resource was not found.</br>The track hasn't been imported yet." 
         except:
             return "Error in MXM API "
 
