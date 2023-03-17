@@ -14,17 +14,38 @@
         <div class="loading" id="loading"></div>
       </form>
       <div class="output" id="output">
-        <p id="output_label1">ISRC: {{ isrc }}</p>
-        <p id="output_label1">Musixmatch Track ID: {{ id }}</p>
-        <p id="output_label2">Musixmatch Track Link: <a href="{{ track_link }}" id="track_link" target="_blank">{{ track_link }}</a></p>
-        <p id="output_label3">Musixmatch Album Link: <a href="{{ album_link }}" id="album_link" target="_blank">{{ album_link }}</a></p>
-      </div>
-    </div>
-    <div class="github_link" style="position:absolute; bottom:0; left:0;">
-        <a href="https://github.com/AdelHashem/Spotify-Link-To-Musixmatch-Track-and-Album-webApp" target="_blank">
-          <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/github.svg" alt="GitHub Repo Link" style="width:50px;">
-      </a>
-    </div>
-    <script src="{{ url_for('static',filename='script.js') }}"></script>
+      {% if tracks_data %}
+        <div class="row">
+          {% for track in tracks_data %}
+            {% if track.isrc %}
+              <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="card">
+                  <img src="{{ track.image }}" alt="{{ track.track_name }}">
+                  <div class="card-details">
+                    <h5 class="card-title">{{ track.track_name }}</h5>
+                    <p class="card-text">Album: {{ track.album_name }}</p>
+                    <p class="card-text">ISRC: {{ track.isrc }}</p>
+                    <p class="card-text">Track ID: {{ track.track_id }}</p>
+                    <a href="{{ track.track_share_url }}" class="card-link" target="_blank">Musixmatch</a>
+                  </div>
+                </div>
+              </div>
+            {% else %}
+              <div class="card">
+                <p class="card-text">{{ track }}</p>
+              </div>
+            {% endif %}
+
+          {% endfor %}
+        </div>
+      {% endif %}
+      <footer>
+        <div class="github_link">
+          <a href="https://github.com/AdelHashem/Spotify-Link-To-Musixmatch-Track-and-Album-webApp" target="_blank">
+            <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/github.svg" alt="GitHub Repo Link" style="width:50px;">
+          </a>
+        </div>
+      </footer>
+      <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 </html>

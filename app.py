@@ -12,15 +12,17 @@ def index():
         link = request.form['link']
         try:
             if(len(link) < 12): return "Wrong Spotify Link Or Wrong ISRC"
-            isrc = sp.get_isrc(link) if len(link) > 12 else link
+            isrcs = sp.get_isrc(link) if len(link) > 12 else [{"isrc": link, "image": None}]
+            #if isinstance(mxmLinks, list):
+                #return "Fetching data failed!"
         except:
             return "Wrong Spotify Link Or Wrong ISRC"
             
-        mxmLinks = mxm.Track_links(isrc)
+        mxmLinks = mxm.Tracks_Data(isrcs)
         if isinstance(mxmLinks, str):
             return mxmLinks
 
-        return render_template('index.html', id=mxmLinks[0], isrc = isrc,track_link=mxmLinks[1].split("?")[0], album_link=mxmLinks[2])
+        return render_template('index.html', tracks_data= mxmLinks)
     return render_template('index.html')
 
 
