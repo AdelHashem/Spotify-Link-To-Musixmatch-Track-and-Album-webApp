@@ -28,7 +28,7 @@ class MXM:
             elif status_code == 403:
                 return "You are not authorized to perform this operation"
             elif status_code == 404:
-                return "The requested resource was not found. The track isn't imported yet."
+                return "The requested resource was not found. The track hasn't been imported yet."
         except requests.exceptions.HTTPError as e:
             return f"HTTP error occurred: {e}"
         except:
