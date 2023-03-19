@@ -11,7 +11,7 @@ def index():
     if request.method == 'POST':
         link = request.form['link']
         try:
-            if(len(link) < 12): return "Wrong Spotify Link Or Wrong ISRC"
+            if(len(link) < 12): return render_template('index.html', tracks_data= ["Wrong Spotify Link Or Wrong ISRC"])
             isrcs = sp.get_isrc(link) if len(link) > 12 else [{"isrc": link, "image": None}]
             #if isinstance(mxmLinks, list):
                 #return "Fetching data failed!"
