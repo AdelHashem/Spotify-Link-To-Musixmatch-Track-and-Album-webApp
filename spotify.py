@@ -1,4 +1,4 @@
-import re
+import re, time
 import requests
 import base64
 from pathlib import Path
@@ -102,6 +102,7 @@ class Spotify:
                     isrcs.append({"isrc":track_info["external_ids"]["isrc"],"image":track_info["album"]["images"][1]["url"] })
                 else:
                     return "Error in get_isrc"
+                time.sleep(0.05)
                 
             return isrcs
 

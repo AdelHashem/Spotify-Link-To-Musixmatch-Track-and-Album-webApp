@@ -1,4 +1,4 @@
-import requests
+import requests,time
 
 class MXM:
     BASE_URL = "http://api.musixmatch.com/ws/1.1/"
@@ -50,8 +50,10 @@ class MXM:
 
     def Tracks_Data(self,iscrcs):
         tracks = []
+        if "isrc" not in iscrcs[0]: return iscrcs
         for i in iscrcs:
             track = self.track_get(i["isrc"])
+            time.sleep(.1)
             try:
                 track = track["message"]["body"]["track"]
                 track["isrc"] = i["isrc"]
