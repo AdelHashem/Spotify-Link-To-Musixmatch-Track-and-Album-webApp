@@ -15,8 +15,8 @@ def index():
             isrcs = sp.get_isrc(link) if len(link) > 12 else [{"isrc": link, "image": None}]
             #if isinstance(mxmLinks, list):
                 #return "Fetching data failed!"
-        except:
-            return "Wrong Spotify Link Or Wrong ISRC"
+        except Exception as e:
+            return e
             
         mxmLinks = mxm.Tracks_Data(isrcs)
         if isinstance(mxmLinks, str):
