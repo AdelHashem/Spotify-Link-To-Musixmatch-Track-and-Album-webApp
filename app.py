@@ -16,7 +16,7 @@ def index():
             #if isinstance(mxmLinks, list):
                 #return "Fetching data failed!"
         except Exception as e:
-            return e
+            return str(e)
             
         mxmLinks = mxm.Tracks_Data(isrcs)
         if isinstance(mxmLinks, str):
