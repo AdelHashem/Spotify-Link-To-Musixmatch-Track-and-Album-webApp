@@ -1,4 +1,3 @@
-
 // Get the form and button elements
 const form = document.querySelector('form');
 const button = document.querySelector('#process_button');
@@ -27,6 +26,6 @@ form.addEventListener('submit', async (event) => {
     return;
   }
 
-  // Submit the form
-  form.submit();
+  // Redirect to the same URL with the input value as a query parameter
+  window.location.href = window.location.href.split('?')[0] + '?link=' + encodeURIComponent(inputLink);
 });
