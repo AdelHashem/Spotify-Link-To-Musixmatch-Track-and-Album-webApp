@@ -7,7 +7,7 @@
   <body>
     <div class="container">
       <h1>Spotify to Musixmatch Link</h1>
-      <form action="/" method="POST">
+      <form action="/" method="GET">
         <label for="input_link">Spotify Track/Album Link Or ISRC:</label>
         <input type="text" id="input_link" name="link" placeholder="Enter Spotify track link here">
         <button type="submit" id="process_button">Get links</button>
@@ -23,7 +23,7 @@
                   <img src="{{ track.image }}" alt="{{ track.track_name }}">
                   <div class="card-details">
                     <h5 class="card-title">{{ track.track_name }}</h5>
-                    <p class="card-text">Album: {{ track.album_name }}</p>
+                    <p class="card-text">Album: <a href="https://www.musixmatch.com/album/{{ track.album_id }}" class="card-link" target="_blank">{{ track.album_name }}</a></p>
                     <p class="card-text">ISRC: {{ track.isrc }}</p>
                     <p class="card-text">Track ID: {{ track.track_id }}</p>
                     <a href="{{ track.track_share_url }}" class="card-link" target="_blank">Musixmatch</a>
@@ -47,5 +47,6 @@
         </div>
       </footer>
       <script src="{{ url_for('static', filename='script.js') }}"></script>
+      
   </body>
 </html>
