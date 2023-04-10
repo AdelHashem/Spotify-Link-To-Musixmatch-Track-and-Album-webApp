@@ -6,7 +6,6 @@ class MXM:
 
     def __init__(self, key=None):
         self.key = key or self.DEFAULT_KEY
-        self.session = requests.Session()
 
     def change_key(self, key):
         self.key = key
@@ -28,7 +27,8 @@ class MXM:
             elif status_code == 403:
                 return "You are not authorized to perform this operation"
             elif status_code == 404:
-                return "The requested resource was not found. The track hasn't been imported yet."
+                return """The requested resource was not found. The track hasn't been imported yet.
+                \nAdd the track to a playlist or add the Album to your library then run it via the app."""
         except requests.exceptions.HTTPError as e:
             return f"HTTP error occurred: {e}"
         except:
@@ -49,6 +49,7 @@ class MXM:
 
 
     def Tracks_Data(self,iscrcs):
+        self.session = requests.Session()
         tracks = []
         if "isrc" not in iscrcs[0]: return iscrcs
         for i in iscrcs:
@@ -61,10 +62,6 @@ class MXM:
                 tracks.append(track)
             except (TypeError, KeyError):
                 tracks.append(track)
+        self.session.close()
         return tracks
         
-
-
-        
-
-
