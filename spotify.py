@@ -42,7 +42,7 @@ class Spotify:
             for i in tracks["items"]:
                 track_info = self.get_tarck(track =i["id"])
                 if "external_ids" in track_info:
-                    isrcs.append({"isrc":track_info["external_ids"]["isrc"],"image":track_info["album"]["images"][1]["url"] })
+                    isrcs.append({"isrc":track_info["external_ids"]["isrc"],"image":track_info["album"]["images"][1]["url"],"track":track_info})
                 else:
                     return "Error in get_isrc"
                 time.sleep(0.03)
@@ -51,9 +51,10 @@ class Spotify:
 
         else:     
             track = self.get_tarck(link,track)
+            print(track)
             if "external_ids" in track:
-                img = track["album"]["images"][1]["url"]
-                isrcs.append({"isrc": track["external_ids"]["isrc"], "image":img })
+                img = track["album"]["images"][1]["url"]                
+                isrcs.append({"isrc": track["external_ids"]["isrc"], "image":img,"track":track})
                 return isrcs
             else:
                 return "Error in get_isrc"
