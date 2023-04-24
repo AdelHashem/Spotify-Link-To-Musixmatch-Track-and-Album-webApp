@@ -84,7 +84,7 @@ class MXM:
             # try to import the track
             if track == 404:
                 
-                if import_count < 2:
+                if import_count < Limit:
                     import_count +=1
                     self.matcher_track(i["track"]["id"])
                     time.sleep(1)
