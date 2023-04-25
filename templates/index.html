@@ -46,8 +46,39 @@
             <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/github.svg" alt="GitHub Repo Link" style="width:50px;">
           </a>
         </div>
+        <div class="instructions">
+            <a href="#" id="how_to_use">How to Use?</a>
+        </div>
       </footer>
-      <script src="{{ url_for('static', filename='script.js') }}"></script>
+      <div class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2>How to Use</h2>
+          <ol>
+            <li>Enter a valid Spotify link (track or album) or ISRC into the input field.</li>
+            <li>Click the "Get links" button and wait until the processing ends.</li>
+          </ol>
+          <h3>If the track has not been imported yet:</h3>
+          <ul>
+            <li>The app tries to import it automatically. You may get the links immediately or have to wait for 1 or 2 minutes (depending on the MXM API).</li>
+            <li>If you see the same message after a while, it means that the app can't import it. You have to ask for help via Slack.</li>
+          </ul>
+          <h3>Spotify Limits:</h3>
+          <ul>
+            <li>You can't get more than 50 tracks from an album.</li>
+          </ul>
+          <h3>Hosting Limits:</h3>
+          <ul>
+            <li>If you see a limit error, it mostly means that the album has many tracks. Try to get the links by using a track link, then open the album from MXM.</li>
+            <li>You can use http://cifor55334.pythonanywhere.com/ or https://spotify-to-mxm.onrender.com/ as a mirror to the Vercel domain.</li>
+          </ul>
+          <p>Finally, if you face a problem or the app is malfunctioning, you can reach me via Slack "@Adel".</p>
+          <p>Hoping this app is useful.</p>
+        </div> 
+      </div>
+      <script src="{{ url_for('static', filename='script.js') }}"></script>      
       
+      
+
   </body>
 </html>
