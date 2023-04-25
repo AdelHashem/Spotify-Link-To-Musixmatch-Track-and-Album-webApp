@@ -29,3 +29,26 @@ form.addEventListener('submit', async (event) => {
   // Redirect to the same URL with the input value as a query parameter
   window.location.href = window.location.href.split('?')[0] + '?link=' + encodeURIComponent(inputLink);
 });
+
+// Get the how-to-use link and modal elements
+const howToUseLink = document.querySelector('#how_to_use');
+const modal = document.querySelector('.modal');
+const closeBtn = document.querySelector('.close');
+
+// Add click event listener for the how-to-use link
+howToUseLink.addEventListener('click', (event) => {
+  event.preventDefault();
+  modal.style.display = 'block';
+});
+
+// Add click event listener for the close button in the modal
+closeBtn.addEventListener('click', () => {
+  modal.style.display = 'none';
+});
+
+// Add click event listener for clicks outside the modal
+window.addEventListener('click', (event) => {
+  if (event.target == modal) {
+    modal.style.display = 'none';
+  }
+});
