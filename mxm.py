@@ -1,10 +1,11 @@
 import requests,time
 from urllib3.util.retry import Retry
+import os
 
 
 class MXM:
     BASE_URL = "https://api.musixmatch.com/ws/1.1/"
-    DEFAULT_KEY = "41b9b3af66092b9d785e30fac520e308"
+    DEFAULT_KEY = os.environ.get("MXM_API")
 
     def __init__(self, key=None):
         self.key = key or self.DEFAULT_KEY
