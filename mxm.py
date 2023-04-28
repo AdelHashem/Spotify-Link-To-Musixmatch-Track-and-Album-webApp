@@ -88,7 +88,8 @@ class MXM:
         if "isrc" not in iscrcs[0]:
             return iscrcs
         
-        matcher = self.matcher_track(iscrcs[0]["track"]["id"])
+        if iscrcs[0].get("track"):
+            matcher = self.matcher_track(iscrcs[0]["track"]["id"])
 
         for i in iscrcs:
             track = self.track_get(i["isrc"])
