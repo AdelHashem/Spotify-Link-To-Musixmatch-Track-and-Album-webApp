@@ -23,8 +23,12 @@
                   <img src="{{ track.image }}" alt="{{ track.track_name }}">
                   <div class="card-details">
                     <h5 class="card-title">{{ track.track_name }}</h5>
-                    <p class="card-text">Album: <a href="https://www.musixmatch.com/album/{{ track.album_id }}" class="card-link" target="_blank">{{ track.album_name }}</a></p>
-                    <p class="card-text">ISRC: {{ track.isrc }}</p>
+                    {% if track.matcher_album %}
+                    <p class="card-text">Album: <a href="https://www.musixmatch.com/album/{{ track.matcher_album[0] }}" class="card-link" target="_blank">{{ track.matcher_album[1] }}</a></p>
+                    {% else %}
+                      <p class="card-text">Album: <a href="https://www.musixmatch.com/album/{{ track.album_id }}" class="card-link" target="_blank">{{ track.album_name }}</a></p>
+                    {% endif %}
+                      <p class="card-text">ISRC: {{ track.isrc }}</p>
                     <p class="card-text">Track ID: {{ track.track_id }}</p>
                     <a href="{{ track.track_share_url }}" class="card-link" target="_blank">Musixmatch</a>
                   </div>

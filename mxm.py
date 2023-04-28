@@ -1,12 +1,21 @@
 import requests,time
+from urllib3.util.retry import Retry
+
 
 class MXM:
-    BASE_URL = "http://api.musixmatch.com/ws/1.1/"
+    BASE_URL = "https://api.musixmatch.com/ws/1.1/"
     DEFAULT_KEY = "41b9b3af66092b9d785e30fac520e308"
 
     def __init__(self, key=None):
         self.key = key or self.DEFAULT_KEY
         self.session = requests.Session()
+        retries = Retry(total=5, backoff_factor=0.1, status_forcelist=[ 500, 502, 503, 504 ])
+        self.session.mount('http://', requests.adapters.HTTPAdapter(max_retries=retries))
+        self.session.mount('https://', requests.adapters.HTTPAdapter(max_retries=retries))
+
+    def __del__(self):
+        if isinstance(self.session, requests.Session):
+            self.session.close()
 
     def change_key(self, key):
         self.key = key
@@ -78,6 +87,9 @@ class MXM:
         import_count = 0
         if "isrc" not in iscrcs[0]:
             return iscrcs
+        
+        matcher = self.matcher_track(iscrcs[0]["track"]["id"])
+
         for i in iscrcs:
             track = self.track_get(i["isrc"])
 
@@ -88,16 +100,24 @@ class MXM:
                     import_count +=1
                     self.matcher_track(i["track"]["id"])
                     time.sleep(1)
-                track = self.track_get(i["isrc"])
+                    track = self.track_get(i["isrc"])
                 if track == 404:
                     track = self.matcher_track(i["track"]["id"])
             if track == 404:
                 track = "The track hasn't been imported yet. Try one more time after a minute (tried to import it using matcher call)."
+                tracks.append(track)
+                continue
             
             try:
                 track = track["message"]["body"]["track"]
                 track["isrc"] = i["isrc"]
                 track["image"] = i["image"]
+                try:
+                    track["matcher_album"] = [matcher["message"]["body"]["track"]["album_id"], matcher["message"]["body"]["track"]["album_name"]]
+                except:
+                    pass
+                
+
                 tracks.append(track)
             except (TypeError, KeyError):
                 tracks.append(track)
