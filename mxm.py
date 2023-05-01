@@ -89,9 +89,10 @@ class MXM:
         if "isrc" not in iscrcs[0]:
             return iscrcs
         
+
         if iscrcs[0].get("track"):
             matcher = self.matcher_track(iscrcs[0]["track"]["id"])
-
+        k = 0
         for i in iscrcs:
             track = self.track_get(i["isrc"])
 
@@ -115,7 +116,9 @@ class MXM:
                 track["isrc"] = i["isrc"]
                 track["image"] = i["image"]
                 try:
-                    track["matcher_album"] = [matcher["message"]["body"]["track"]["album_id"], matcher["message"]["body"]["track"]["album_name"]]
+                    if k == 0 and track["commontrack_id"] == matcher["message"]["body"]["track"]["commontrack_id"]:
+                        track["matcher_album"] = [matcher["message"]["body"]["track"]["album_id"], matcher["message"]["body"]["track"]["album_name"]]
+                        k+=1
                 except:
                     pass
                 
@@ -124,4 +127,6 @@ class MXM:
             except (TypeError, KeyError):
                 tracks.append(track)
             time.sleep(.1)
+
+        print(tracks)
         return tracks
