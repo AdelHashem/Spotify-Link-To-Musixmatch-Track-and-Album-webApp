@@ -52,3 +52,21 @@ window.addEventListener('click', (event) => {
     modal.style.display = 'none';
   }
 });
+
+const currentUrl = window.location.href;
+document.querySelector('.note').style.display = currentUrl.includes('?') ? 'none' : 'block';
+
+// Get the close button element
+var closeButton = document.getElementById("closenote");
+
+// Get the note element
+var note = document.querySelector(".note");
+
+// If the close button and note elements exist
+if (closeButton && note) {
+  // Add an event listener to the close button
+  closeButton.addEventListener("click", function() {
+    // Hide the note element
+    note.style.display = "none";
+  });
+}

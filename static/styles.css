@@ -222,3 +222,23 @@ body {
     cursor: pointer;
     opacity: 1; /* increase opacity on hover/focus */
   }
+
+  .note {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    z-index: 10;
+    background-color: #fff;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-width: 300px;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+  }
+  
+  .note-text {
+    font-size: 16px;
+    font-family: sans-serif;
+    line-height: 1.5;
+    color: #333;
+  }
