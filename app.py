@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template
 from mxm import MXM
 from spotify import Spotify
+import re
 
 app = Flask(__name__)
 sp = Spotify()
@@ -12,9 +13,8 @@ def index():
     if link:
         try:
             if(len(link) < 12): return render_template('index.html', tracks_data= ["Wrong Spotify Link Or Wrong ISRC"])
-            isrcs = sp.get_isrc(link) if len(link) > 12 else [{"isrc": link, "image": None}]
-            #if isinstance(mxmLinks, list):
-                #return "Fetching data failed!"
+            elif re.search(r'artist/(\w+)', link): return render_template('index.html',artist=sp.artist_albums(link))
+            else: isrcs = sp.get_isrc(link) if len(link) > 12 else [{"isrc": link, "image": None}]
         except Exception as e:
             return render_template('index.html', tracks_data= [str(e)])
             

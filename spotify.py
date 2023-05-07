@@ -29,6 +29,9 @@ class Spotify:
 
     def get_album_tarck(self, id: str) -> dict:
         return self.sp.album_tracks(id)
+    
+    def get_tracks(self,ids) -> list:
+        return self.sp.tracks(ids)["tracks"]
 
 
     def get_isrc(self,link):
@@ -38,11 +41,12 @@ class Spotify:
         if match: 
             tracks = self.get_album_tarck(match.group(1))
             link = None
+            ids = [temp["id"] for temp in tracks["items"]]
+            tracks = self.get_tracks(ids)
 
-            for i in tracks["items"]:
-                track_info = self.get_tarck(track =i["id"])
-                if "external_ids" in track_info:
-                    isrcs.append({"isrc":track_info["external_ids"]["isrc"],"image":track_info["album"]["images"][1]["url"],"track":track_info})
+            for i in tracks:
+                if "external_ids" in i:
+                    isrcs.append({"isrc":i["external_ids"]["isrc"],"image":i["album"]["images"][1]["url"],"track":i})
                 else:
                     return "Error in get_isrc"
                 time.sleep(0.03)
@@ -58,10 +62,21 @@ class Spotify:
                 return isrcs
             else:
                 return "Error in get_isrc"
+            
+    def artist_albums(self,link,albums = [],offset = 0) -> list: 
+        data = self.sp.artist_albums(link,limit=50,offset=offset)
+        offset =offset +50
+        albums.extend(data["items"])
+        if data["next"]: return self.artist_albums(link,albums,offset)
+        else: return albums
+
 
     def get_spotify_id(self,link):
         match = re.search(r'track/(\w+)', link)
         if match:
             return match.group(1)
+        elif re.search(r'artist/(\w+)', link):
+            return re.search(r'track/(\w+)', link).group(1)
+        
         else:
             return None

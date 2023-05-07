@@ -29,7 +29,7 @@
                       <p class="card-text">Album: <a href="https://www.musixmatch.com/album/{{ track.album_id }}" class="card-link" target="_blank">{{ track.album_name }}</a></p>
                     {% endif %}
                       <p class="card-text">ISRC: {{ track.isrc }}</p>
-                    <p class="card-text">Track ID: {{ track.track_id }}</p>
+                    <p class="card-text">Track ID: {{ track.commontrack_id}}</p>
                     <a href="{{ track.track_share_url }}" class="card-link" target="_blank">Musixmatch</a>
                   </div>
                 </div>
@@ -43,6 +43,26 @@
           {% endfor %}
         </div>
       {% endif %}
+      {% if artist %}
+        <div class="row">
+          {% for album in artist %}
+            <div class="col-sm-6 col-md-4 col-lg-3">
+              <div class="card">
+                <img src="{{ album.images[0].url }}" alt="{{ album.name }}">
+                <div class="card-details">
+                  <h5 class="card-title">{{ album.name }}</h5>
+                  <p class="card-text">type: {{ album.album_type}}</p>
+                  <p class="card-text">Sotify: <a href="{{ album.external_urls.spotify }}" target="_blank">Album link</a></p>
+                  <a href="/?link={{ album.external_urls.spotify }}" target="_blank">Get MXM Links</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>  
+      {% endif %}
+
+
+
       <footer>
         <script defer src="https://spotify-to-mxm.vercel.app/_vercel/insights/script.js"></script>
         <div class="github_link">
