@@ -1,9 +1,9 @@
 body {
   background: #f5f5f5 url(bg-music.png) no-repeat top right;
-  font-family: 'Open Sans', sans-serif;
-  }
-  
-  .container {
+  font-family: "Open Sans", sans-serif;
+}
+
+.container {
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
@@ -11,16 +11,16 @@ body {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px #ccc;
-  }
-  
-  h1 {
+}
+
+h1 {
   font-size: 3em;
   font-weight: 600;
   margin-bottom: 20px;
-  color: #1DB954;
-  }
-  
-  form {
+  color: #1db954;
+}
+
+form {
   margin: 0 auto;
   width: 80%;
   display: flex;
@@ -28,218 +28,272 @@ body {
   align-items: center;
   justify-content: center;
   margin-bottom: 30px;
-  }
-  
-  label {
+}
+
+label {
   font-size: 1.2em;
   font-weight: 600;
   margin-right: 10px;
-  }
-  
-  input[type="text"] {
+}
+
+input[type="text"] {
   padding: 12px 20px;
   margin: 8px 0;
   box-sizing: border-box;
   border: 2px solid #ccc;
   border-radius: 4px;
   width: 100%;
-  }
-  
-  button[type="submit"] {
+}
+
+button[type="submit"] {
   width: 100%;
   padding: 14px 20px;
   margin: 8px 0;
   border: none;
   border-radius: 4px;
-  background-color: #1DB954;
+  background-color: #1db954;
   color: white;
   font-size: 1.2em;
   font-weight: 600;
   cursor: pointer;
-  }
-  
-  button[type="submit"]:hover {
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
   background-color: #198649;
-  }
-  
-  .output {
+}
+
+.output {
   text-align: left;
   margin-top: 30px;
   font-size: 1.2em;
-  }
-  
-  .output p {
+}
+
+.output p {
   margin: 10px 0;
-  }
-  
-  .loading {
+}
+
+.loading {
   display: none;
   margin: 0 auto;
   text-align: center;
-  }
-  
-  .error {
+}
+
+.error {
   color: red;
   display: none;
   margin: 10px 0;
   text-align: center;
-  }
-  
-  .logo {
+}
+
+.logo {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  }
-  
-  .logo img {
+}
+
+.logo img {
   width: 50px;
   height: 50px;
-  }
-  
-  .logo img:first-child {
+}
+
+.logo img:first-child {
   margin-right: 10px;
-  }
-  
-  .logo img:last-child {
+}
+
+.logo img:last-child {
   margin-left: 10px;
-  }
+}
 
-  .card {
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px #ccc;
-    margin: 20px;
-    padding: 20px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    }
+.card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px #ccc;
+  margin: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
 
-  .card img {
-    width: 150px;
-    margin-right: 20px;
-  }
+.card img {
+  width: 150px;
+  margin-right: 20px;
+}
 
-  .card-details {
-    flex: 1;
-  }
+.card-details {
+  flex: 1;
+  margin-top: -10px;
+}
 
-  .card-title {
-    margin-bottom: 5px;
-  }
+.card-title {
+  margin-bottom: 5px;
+}
 
-  .card-text {
-    margin-bottom: 0;
-  }
+.card-text {
+  margin-bottom: 0;
+}
 
-  .card-text:last-child {
-    margin-bottom: 5px;
-  }
+.card-text:last-child {
+  margin-bottom: 5px;
+}
 
-  .card-link {
-    margin-top: 10px;
-  }
+.card-link {
+  margin-top: 10px;
+  text-decoration: none;
+  color: black;
+  transition: color 0.3s ease;
+}
+.card-link:hover {
+  margin-top: 10px;
+  text-decoration: underline;
+  color: #1db954;
+}
 
-  .loading {
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #3498db;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 2s linear infinite;
-    display: none;
-    margin: 0 auto;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+.loading {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+  display: none;
+  margin: 0 auto;
+}
 
-  .instructions {
-    position: sticky;
-    top: 10px;
-    right: 10px;
-    z-index: 1;
-    text-align: center;
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
-  
-  .instructions a {
-    display: inline-block;
-    padding: 10px 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f8f8f8;
-    text-decoration: none;
-    color: #333;
-    font-size: 14px;
+  100% {
+    transform: rotate(360deg);
   }
-  
-  .instructions a:hover {
-    background-color: #ddd;
-  }
-  
-  /* Modal styles */
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.5);
-  }
-  
-  .modal-content {
-    background-color: #fefefe;
-    margin: 10% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-  }
-  
-  .close {
-    display: block;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #aaa;
-    text-shadow: 1px 1px #fff; /* add a subtle text shadow */
-    opacity: 0.7; /* reduce opacity to make it semi-transparent */
-    transition: opacity 0.2s ease-in-out; /* add a transition effect */
-  }
-  
-  .close:hover,
-  .close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-    opacity: 1; /* increase opacity on hover/focus */
-  }
+}
 
-  .note {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    z-index: 10;
-    background-color: #fff;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    max-width: 300px;
-    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
-    display: block;
-  }
-  
-  .note-text {
-    font-size: 16px;
-    font-family: sans-serif;
-    line-height: 1.5;
-    color: #333;
-  }
+.instructions {
+  position: sticky;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  text-align: center;
+}
+
+.instructions a {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f8f8f8;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+}
+
+.instructions a:hover {
+  background-color: #ddd;
+}
+
+/* Modal styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
+}
+
+.close {
+  display: block;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #aaa;
+  text-shadow: 1px 1px #fff; /* add a subtle text shadow */
+  opacity: 0.7; /* reduce opacity to make it semi-transparent */
+  transition: opacity 0.2s ease-in-out; /* add a transition effect */
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 1; /* increase opacity on hover/focus */
+}
+
+.note {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  z-index: 10;
+  background-color: #fff;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  max-width: 300px;
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+  display: block;
+}
+
+.note-text {
+  font-size: 16px;
+  font-family: sans-serif;
+  line-height: 1.5;
+  color: #333;
+}
+
+/* Additional animations and transitions */
+.container {
+  transition: background-color 0.3s ease;
+}
+
+.container:hover {
+  background-color: #f8f8f8;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.button-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.button-container:hover .card-link {
+  color: #1db954;
+}
+
+.button-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(29, 185, 84, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.button-container:hover::before {
+  opacity: 1;
+}
