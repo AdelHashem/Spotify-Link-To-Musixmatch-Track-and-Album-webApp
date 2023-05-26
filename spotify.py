@@ -48,7 +48,7 @@ class Spotify:
                         {
                             "isrc": i["external_ids"]["isrc"],
                             "image": i["album"]["images"][1]["url"],
-                            "track": i,
+                            "track": i
                         }
                     )
                 else:
@@ -65,7 +65,7 @@ class Spotify:
                     {
                         "isrc": track["external_ids"]["isrc"],
                         "image": img,
-                        "track": track,
+                        "track": track
                     }
                 )
                 return isrcs
