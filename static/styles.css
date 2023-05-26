@@ -145,13 +145,13 @@ button[type="submit"]:hover {
 .card-link {
   margin-top: 10px;
   text-decoration: none;
-  color: black;
+  color: #1db954;
   transition: color 0.3s ease;
 }
 .card-link:hover {
   margin-top: 10px;
   text-decoration: underline;
-  color: #1db954;
+  color: #e23f3f;
 }
 
 .loading {
