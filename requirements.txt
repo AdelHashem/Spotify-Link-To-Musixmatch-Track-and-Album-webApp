@@ -1,4 +1,5 @@
 flask
+mxmapi
 requests[security]
 spotipy
 click==8.1.3
