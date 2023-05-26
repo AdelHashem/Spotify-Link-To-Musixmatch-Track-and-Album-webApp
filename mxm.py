@@ -16,7 +16,9 @@ class MXM:
 
     def track_get(self, isrc=None, commontrack_id=None) -> dict:
         try:
-            response = self.musixmatch.track_get(isrc, commontrack_id)
+            response = self.musixmatch.track_get(
+                track_isrc=isrc, commontrack_id=commontrack_id
+            )
             return response
         except mxmapi.exceptions.MXMException as e:
             if re.search("404", str(e)):
@@ -65,9 +67,11 @@ class MXM:
             if track == 404:
                 if import_count < Limit:
                     import_count += 1
-                    self.matcher_track(i["track"]["id"])
+                    track = self.matcher_track(i["track"]["id"])
+                    if isinstance(track, mxmapi.exceptions.MXMException):
+                        tracks.append(track)
+                        continue
                     track = self.track_get(i["isrc"])
-
             if track == 404:
                 track = "The track hasn't been imported yet. Try one more time after a minute (tried to import it using matcher call)."
                 tracks.append(track)
