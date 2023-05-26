@@ -65,10 +65,11 @@ class MXM:
             if track == 404:
                 if import_count < Limit:
                     import_count += 1
-                    self.matcher_track(i["track"]["id"])
-                    track = self.track_get(i["isrc"])
-                if track == 404:
                     track = self.matcher_track(i["track"]["id"])
+                    if isinstance(track, mxmapi.exceptions.MXMException):
+                        tracks.append(track)
+                        continue
+                    track = self.track_get(i["isrc"])
             if track == 404:
                 track = "The track hasn't been imported yet. Try one more time after a minute (tried to import it using matcher call)."
                 tracks.append(track)
