@@ -1,6 +1,6 @@
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-import re, time
+import re
 import requests
 from pathlib import Path
 
@@ -49,7 +49,7 @@ class Spotify:
                     isrcs.append({"isrc":i["external_ids"]["isrc"],"image":i["album"]["images"][1]["url"],"track":i})
                 else:
                     return "Error in get_isrc"
-                time.sleep(0.03)
+                
                 
             return isrcs
 
