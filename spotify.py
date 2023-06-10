@@ -64,7 +64,7 @@ class Spotify:
                 return "Error in get_isrc"
             
     def artist_albums(self,link,albums = [],offset = 0) -> list: 
-        data = self.sp.artist_albums(link,limit=50,offset=offset)
+        data = self.sp.artist_albums(link,limit=50,offset=offset,album_type="album,single,compilation")
         offset =offset +50
         albums.extend(data["items"])
         if data["next"]: return self.artist_albums(link,albums,offset)
