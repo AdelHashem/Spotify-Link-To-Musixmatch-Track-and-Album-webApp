@@ -1,6 +1,6 @@
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-import re, time
+import re
 import requests
 from pathlib import Path
 
@@ -49,7 +49,7 @@ class Spotify:
                     isrcs.append({"isrc":i["external_ids"]["isrc"],"image":i["album"]["images"][1]["url"],"track":i})
                 else:
                     return "Error in get_isrc"
-                time.sleep(0.03)
+                
                 
             return isrcs
 
@@ -64,7 +64,7 @@ class Spotify:
                 return "Error in get_isrc"
             
     def artist_albums(self,link,albums = [],offset = 0) -> list: 
-        data = self.sp.artist_albums(link,limit=50,offset=offset)
+        data = self.sp.artist_albums(link,limit=50,offset=offset,album_type="album,single,compilation")
         offset =offset +50
         albums.extend(data["items"])
         if data["next"]: return self.artist_albums(link,albums,offset)
