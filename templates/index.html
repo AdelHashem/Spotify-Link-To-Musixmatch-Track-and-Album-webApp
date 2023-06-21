@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>Spotify to Musixmatch Link</title>
     <link
@@ -8,13 +8,41 @@
       href="{{ url_for('static', filename='styles.css') }}"
     />
     <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta content="Spotify To Mxm" property="og:title" />
+    <meta
+      content="Get Musixmatch Link, ISRC, Track ID, Album Link From Spotify Link"
+      property="og:description"
+    />
+    <meta content="#ff6050" data-react-helmet="true" name="theme-color" />
   </head>
   <body>
+    <div id="offline-div" spellcheck="true" style="display: none">
+      <h3
+        style="
+          font-size: 50px;
+          margin: 0;
+          padding: 0;
+          color: #ff5900;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        "
+      >
+        No Internet Connection
+      </h3>
+      <p
+        style="
+          font-size: 30px;
+          margin: 0;
+          padding: 0;
+          color: #ff0000;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        "
+      >
+        Make sure you're connected to the internet.
+      </p>
+    </div>
     <div class="container">
       <h1>Spotify to Musixmatch Link</h1>
-      <div id="offline-div">
-        <h3>No Internet Connection</h3>
-      </div>
       <form action="/" method="GET">
         <label for="input_link">Spotify Track|Album|Artist Link Or ISRC:</label>
         <input
