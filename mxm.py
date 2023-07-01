@@ -85,8 +85,16 @@ class MXM:
                             matcher["album_id"],
                             matcher["album_name"],
                         ]
+                elif (matcher.get("album_name") == sp_data[i]["track"]["album"]["name"]
+                      and matcher.get("track_name") == sp_data[i]["track"]["name"]):
+                    matcher["note"] = f'''This track may having two pages with the same ISRC,
+                      the other <a class="card-link" href="{track["track_share_url"]}" target="_blank"
+                    >page</a>'''
+                    links.append(matcher)
                 else: 
-                    track["note"] = "This track may be facing an ISRC issue."
+                    track["note"] = f'''This track may be facing an ISRC issue
+                      as the Spotify ID is connected to another <a class="card-link" href="{matcher["track_share_url"]}" target="_blank"
+                    >page</a>.'''
                 links.append(track)
                 continue
 
