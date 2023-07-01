@@ -36,7 +36,7 @@ async def index():
     link = request.args.get('link')
     if link:
         client.start_session()
-        mxm = MXM("1a5c1f4609e375a9784e88cb42fd084f",session=client.get_session())
+        mxm = MXM(session=client.get_session())
         try:
             if(len(link) < 12): return render_template('index.html', tracks_data= ["Wrong Spotify Link Or Wrong ISRC"])
             elif re.search(r'artist/(\w+)', link): return render_template('index.html',artist=sp.artist_albums(link,[]))
