@@ -105,7 +105,7 @@
                   >
                 </p>
                 {% if track.note %}
-                  <p class="card-text">Note: {{ track.note }}</p>
+                  <p class="card-text">Note: {{ track.note|safe }}</p>
                 {% endif %}
               </div>
             </div>
