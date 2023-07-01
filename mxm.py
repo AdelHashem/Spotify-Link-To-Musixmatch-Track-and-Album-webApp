@@ -1,104 +1,129 @@
-import time
 import os
-import mxmapi
 import re
+
+import Asyncmxm 
+import asyncio
 
 
 class MXM:
     DEFAULT_KEY = os.environ.get("MXM_API")
+    DEFAULT_KEY2 = os.environ.get("MXM_API2")
 
-    def __init__(self, key=None):
+    def __init__(self, key=None, session=None):
         self.key = key or self.DEFAULT_KEY
-        self.musixmatch = mxmapi.Musixmatch(self.key)
+        self.key2 = key or self.DEFAULT_KEY2
+        self.session = session
+        self.musixmatch = Asyncmxm.Musixmatch(self.key,requests_session=session)
+        self.musixmatch2 = Asyncmxm.Musixmatch(self.key2,requests_session=session)
 
     def change_key(self, key):
         self.key = key
 
-    def track_get(self, isrc=None, commontrack_id=None) -> dict:
+    async def track_get(self, isrc=None, commontrack_id=None) -> dict:
         try:
-            response = self.musixmatch.track_get(
+            response = await self.musixmatch.track_get(
                 track_isrc=isrc, commontrack_id=commontrack_id
             )
             return response
-        except mxmapi.exceptions.MXMException as e:
-            if re.search("404", str(e)):
-                return 404
-            else:
-                return e
+        except Asyncmxm.exceptions.MXMException as e:
+            return str(e)
 
-    def matcher_track(self, sp_id):
+    async def matcher_track(self, sp_id):
         try:
-            response = self.musixmatch.matcher_track_get(
+            response = await self.musixmatch2.matcher_track_get(
                 q_track="null", track_spotify_id=sp_id
             )
             return response
-        except mxmapi.exceptions.MXMException as e:
-            if re.search("404", str(e)):
-                return 404
-            else:
-                return e
+        except Asyncmxm.exceptions.MXMException as e:
+            return str(e)
 
-    def Track_links(self, isrc):
-        track = self.track_get(isrc)
+    async def Track_links(self, sp_data):
+        isrc = sp_data["isrc"]
+        track = await self.track_get(isrc)
         try:
             id = track["message"]["body"]["track"]["commontrack_id"]
-        except TypeError:
+        except TypeError as e:
             return track
-        track_url = track["message"]["body"]["track"]["track_she_url"]
-        album_id = track["message"]["body"]["track"]["album_id"]
 
-        album_url = f"https://www.musixmatch.com/album/id/{album_id}"
-        return [id, track_url, album_url]
+        track = track["message"]["body"]["track"]
+        track["isrc"] = sp_data["isrc"]
+        track["image"] = sp_data["image"]
+        
+        return track
+    
+    async def matcher_links(self, sp_data):
+        id = sp_data["track"]["id"]
+        track = await self.matcher_track(id)
+        try:
+            id = track["message"]["body"]["track"]["commontrack_id"]
+        except TypeError as e:
+            return track
 
-    def Tracks_Data(self, iscrcs):
-        tracks = []
-        Limit = 5
-        import_count = 0
-        if "isrc" not in iscrcs[0]:
-            return iscrcs
+        track = track["message"]["body"]["track"]
+        track["isrc"] = sp_data["isrc"]
+        track["image"] = sp_data["image"]
+        return track
 
-        if iscrcs[0].get("track"):
-            matcher = self.matcher_track(iscrcs[0]["track"]["id"])
-        k = 0
-        for i in iscrcs:
-            track = self.track_get(i["isrc"])
+    async def Tracks_Data(self, sp_data):
+        links = []
+        tracks = await self.tracks_get(sp_data)
+        if  sp_data[0].get("track"):
+            matchers = await self.tracks_matcher(sp_data)
+        else:
+            return tracks
 
-            # try to import the track
-            if track == 404:
-                if import_count < Limit:
-                    import_count += 1
-                    track = self.matcher_track(i["track"]["id"])
-                    if isinstance(track, mxmapi.exceptions.MXMException):
-                        tracks.append(track)
-                        continue
-                    track = self.track_get(i["isrc"])
-            if track == 404:
-                track = "The track hasn't been imported yet. Try one more time after a minute (tried to import it using matcher call)."
-                tracks.append(track)
+        for i in range(len(tracks)):
+            track = tracks[i]
+            matcher = matchers[i]
+
+            if isinstance(track, dict) and isinstance(matcher, dict):
+                if (track["commontrack_id"] == matcher["commontrack_id"]):
+                    track["matcher_album"] = [
+                        matcher["album_id"],
+                        matcher["album_name"],
+                    ]
+                    links.append(track)
+                elif (matcher.get("album_name") == sp_data[i]["track"]["album"]["name"]
+                      and matcher.get("track_name") == sp_data[i]["track"]["name"]):
+                    matcher["note"] = f'''This track may having two pages with the same ISRC,
+                      the other <a class="card-link" href="{track["track_share_url"]}" target="_blank"
+                    >page</a>'''
+                    links.append(matcher)
+                else: 
+                    track["note"] = f'''This track may be facing an ISRC issue
+                      as the Spotify ID is connected to another <a class="card-link" href="{matcher["track_share_url"]}" target="_blank"
+                    >page</a>.'''
+                    links.append(track)
                 continue
 
-            try:
-                track = track["message"]["body"]["track"]
-                track["isrc"] = i["isrc"]
-                track["image"] = i["image"]
-                try:
-                    if (
-                        k == 0
-                        and track["commontrack_id"]
-                        == matcher["message"]["body"]["track"]["commontrack_id"]
-                    ):
-                        track["matcher_album"] = [
-                            matcher["message"]["body"]["track"]["album_id"],
-                            matcher["message"]["body"]["track"]["album_name"],
-                        ]
-                        k += 1
-                except:
-                    pass
-
-                tracks.append(track)
-            except (TypeError, KeyError):
-                tracks.append(track)
-            time.sleep(0.1)
-
-        print(tracks)
+            elif isinstance(track, str) and isinstance(matcher, str):
+                if re.search("404", track):
+                    track = """
+                    The track hasn't been imported yet. Please try again after 1-5 minutes. 
+                    Sometimes it may take longer, up to 15 minutes, depending on the MXM API and their servers.
+                    """
+                    links.append(track)
+                    continue
+            elif isinstance(track, str) and isinstance(matcher, dict):
+                if matcher.get("album_name") == sp_data[i]["track"]["album"]["name"]:
+                    links.append(matcher)
+                    continue
+            elif isinstance(track, dict) and isinstance(matcher, str):
+                track["note"] = "This track may missing its Spotify id"
+                links.append(track)
+            else:
+                links.append(track)
+        return links
+    
+    async def tracks_get(self, data):
+        coro = [self.Track_links(isrc) for isrc in data]
+        tasks = [asyncio.create_task(c) for c in coro]
+        tracks = await asyncio.gather(*tasks)
         return tracks
+    
+    async def tracks_matcher(self, data):
+        coro = [self.matcher_links(isrc) for isrc in data]
+        tasks = [asyncio.create_task(c) for c in coro]
+        tracks = await asyncio.gather(*tasks)
+        return tracks
+        

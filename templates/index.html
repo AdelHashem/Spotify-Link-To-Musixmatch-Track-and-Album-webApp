@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9CGEX232D0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-9CGEX232D0');
+  </script>
     <title>Spotify to Musixmatch Link</title>
     <link
       rel="stylesheet"
@@ -95,6 +104,9 @@
                     >Musixmatch</a
                   >
                 </p>
+                {% if track.note %}
+                  <p class="card-text">Note: {{ track.note|safe }}</p>
+                {% endif %}
               </div>
             </div>
           </div>
@@ -153,6 +165,7 @@ elHashem/Spotify-Link-To-Musixmatch-Track-and-Album-webApp"
         <div class="instructions">
           <a href="#" id="how_to_use">How to Use?</a>
         </div>
+        <div>Coded with ❤️ for music</div>
       </footer>
       <div class="note">
         <span class="close" id="closenote">&times;</span>
