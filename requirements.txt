@@ -3,6 +3,7 @@ mxmapi
 requests[security]
 spotipy
 hypercorn
+aiohttp
 click==8.1.3
 gunicorn==20.1.0
 importlib-metadata==5.0.0
