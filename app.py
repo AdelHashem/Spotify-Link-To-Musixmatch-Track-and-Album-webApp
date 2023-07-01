@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template
+from asgiref.wsgi import WsgiToAsgi
 from mxm import MXM
 from spotify import Spotify
 import re
@@ -53,5 +54,6 @@ async def index():
 
     return render_template('index.html')
 
+asgi_app = WsgiToAsgi(app)
 if __name__ == '__main__':
     app.run(debug=True)
