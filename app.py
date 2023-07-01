@@ -56,4 +56,8 @@ async def index():
 
 asgi_app = WsgiToAsgi(app)
 if __name__ == '__main__':
-    app.run(debug=True)
+    import asyncio
+    from hypercorn.config import Config
+    from hypercorn.asyncio import serve
+    asyncio.run(serve(app, Config()))
+    #app.run(debug=True)
