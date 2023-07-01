@@ -95,6 +95,9 @@
                     >Musixmatch</a
                   >
                 </p>
+                {% if track.note %}
+                  <p class="card-text">Note: {{ track.note }}</p>
+                {% endif %}
               </div>
             </div>
           </div>
