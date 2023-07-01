@@ -25,7 +25,7 @@ class StartAiohttp:
             await self.session.close()
             self.session = None
 
-client = StartAiohttp(5,5)
+client = StartAiohttp(7,7)
 
 
 app = Flask(__name__)
