@@ -13,3 +13,4 @@ MarkupSafe==2.1.1
 Werkzeug
 zipp==3.10.0
 asgiref
+jellyfish

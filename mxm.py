@@ -1,6 +1,6 @@
 import os
 import re
-
+import jellyfish
 import Asyncmxm 
 import asyncio
 
@@ -75,25 +75,45 @@ class MXM:
         for i in range(len(tracks)):
             track = tracks[i]
             matcher = matchers[i]
-
+            # detecting what issues can facing the track
             if isinstance(track, dict) and isinstance(matcher, dict):
+
+                # the get call and the matcher call are the same and both have valid response
                 if (track["commontrack_id"] == matcher["commontrack_id"]):
                     track["matcher_album"] = [
                         matcher["album_id"],
                         matcher["album_name"],
                     ]
                     links.append(track)
-                elif (matcher.get("album_name") == sp_data[i]["track"]["album"]["name"]
-                      and matcher.get("track_name") == sp_data[i]["track"]["name"]):
-                    matcher["note"] = f'''This track may having two pages with the same ISRC,
-                      the other <a class="card-link" href="{track["track_share_url"]}" target="_blank"
-                    >page</a>'''
-                    links.append(matcher)
+                    ''' when we get different data, the sp id attached to the matcher so we try to detect
+                    if the matcher one is vailid or it just a ISRC error.
+                    I used the probability here to choose the most accurate data to the spotify data
+                    '''
                 else: 
-                    track["note"] = f'''This track may be facing an ISRC issue
-                      as the Spotify ID is connected to another <a class="card-link" href="{matcher["track_share_url"]}" target="_blank"
-                    >page</a>.'''
-                    links.append(track)
+                    matcher_title = re.sub(r'[()-.]', '', matcher.get("track_name"))
+                    matcher_album = re.sub(r'[()-.]', '', matcher.get("album_name"))
+                    sp_title = re.sub(r'[()-.]', '', sp_data[i]["track"]["name"])
+                    sp_album = re.sub(r'[()-.]', '', sp_data[i]["track"]["album"]["name"])
+                    track_title = re.sub(r'[()-.]', '', track.get("track_name"))
+                    track_album = re.sub(r'[()-.]', '', track.get("album_name"))
+                    if (matcher.get("album_name") == sp_data[i]["track"]["album"]["name"]
+                      and matcher.get("track_name") == sp_data[i]["track"]["name"]
+                      or jellyfish.jaro_distance(matcher_title.lower(), sp_title.lower())
+                       * jellyfish.jaro_distance(matcher_album.lower(), sp_album.lower())  >=
+                         jellyfish.jaro_distance(track_title.lower(), sp_title.lower())
+                       * jellyfish.jaro_distance(track_album.lower(), sp_album.lower()) ):
+                        matcher["note"] = f'''This track may having two pages with the same ISRC,
+                        the other <a class="card-link" href="{track["track_share_url"]}" target="_blank"
+                        >page</a> from <a class="card-link" href="https://www.musixmatch.com/album/{(track["album_id"])}" target="_blank"
+                        >album</a>.'''
+                        links.append(matcher)
+                    else:
+
+                        track["note"] = f'''This track may be facing an ISRC issue
+                        as the Spotify ID is connected to another <a class="card-link" href="{matcher["track_share_url"]}" target="_blank"
+                        >page</a> from <a class="card-link" href="https://www.musixmatch.com/album/{(matcher["album_id"])}" target="_blank"
+                        >album</a>.'''
+                        links.append(track)
                 continue
 
             elif isinstance(track, str) and isinstance(matcher, str):
