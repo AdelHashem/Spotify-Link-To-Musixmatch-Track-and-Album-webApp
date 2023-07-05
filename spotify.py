@@ -46,7 +46,11 @@ class Spotify:
 
             for i in tracks:
                 if "external_ids" in i:
-                    isrcs.append({"isrc":i["external_ids"]["isrc"],"image":i["album"]["images"][1]["url"],"track":i})
+                    try:
+                        image = i["album"]["images"][1]["url"]
+                    except:
+                        image = None
+                    isrcs.append({"isrc":i["external_ids"]["isrc"],"image":image ,"track":i})
                 else:
                     return "Error in get_isrc"
                 
