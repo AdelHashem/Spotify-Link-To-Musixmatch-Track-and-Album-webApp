@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9CGEX232D0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-9CGEX232D0');
+  </script>
+  <title>Split Checker</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}" />
+  <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta content="Spotify To Mxm" property="og:title" />
+  <meta content="Get Musixmatch Link, ISRC, Track ID, Album Link From Spotify Link" property="og:description" />
+  <meta content="#ff6050" data-react-helmet="true" name="theme-color" />
+</head>
+<body>
+  <div id="offline-div" spellcheck="true" style="display: none">
+    <h3 style="font-size: 50px; margin: 0; padding: 0; color: #ff5900; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
+      No Internet Connection
+    </h3>
+    <p style="font-size: 30px; margin: 0; padding: 0; color: #ff0000; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
+      Make sure you're connected to the internet.
+    </p>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <ul>
+      <li><a href="/">Home Page</a></li>
+      <li><a href="/isrc">ISRC Finder</a></li>
+      <li><a href="/split">Split Checker</a></li>
+    </ul>
+  </nav>
+
+
+  <div class="container">
+    <h1>Split Checker</h1>
+    <form action="/" method="GET">
+      <label for="input_link_1">Track 1:</label>
+      <input type="text" id="input_link_1" name="link_1" placeholder="Enter Spotify track link 1" />
+      <label for="input_link_2">Track 2:</label>
+      <input type="text" id="input_link_2" name="link_2" placeholder="Enter Spotify track link 2" />
+      <button type="submit" id="split_button">Check</button>
+      <div class="loading" id="loading"></div>
+    </form>
+    <div class="output" id="output">
+        <div class="row">
+            {% if split_result %}
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="card">
+                        <table>
+                        <thead>
+                            <tr>
+                            <th></th>
+                            <th>Track 1</th>
+                            <th>Track 2</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td>Track 1 ISRC:</td>
+                            <td>{{ split_result.track1.isrc }}</td>
+                            <td>{{ split_result.track2.isrc }}</td>
+                            </tr>
+                            <tr>
+                            <td>Track 1 Name:</td>
+                            <td>{{ split_result.track1.track.name  }}</td>
+                            <td>{{ split_result.track2.track.name  }}</td>
+                            </tr>
+                            <tr>
+                              <td>Track ID:</td>
+                              <td>{{ split_result.track1.commontrack_id }}</td>
+                              <td>{{ split_result.track2.commontrack_id }}</td>
+                              </tr>
+                            <tr>
+                            <td>Musixmatch Link:</td>
+                            <td><a href="{{ split_result.track1.track_share_url }}" target="_blank">Musixmatch</a></td>
+                            <td><a href="{{ split_result.track2.track_share_url }}" target="_blank">Musixmatch</a></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                            <td colspan="3">{{ message|safe }}</td>
+                            </tr>
+                        </tfoot>
+                        </table>
+                </div>
+            </div>
+            {% else %}{% if error %}
+            <p class="card-text">{{ error }}</p>
+            {% endif %}
+
+            {% endif %}
+
+
+        </div>
+    </div>
+    <footer>
+      <script defer src="https://spotify-to-mxm.vercel.app/_vercel/insights/script.js"></script>
+      <div class="github_link">
+        <a href="https://github.com/AdelHashem/Spotify-Link-To-Musixmatch-Track-and-Album-webApp" target="_blank">
+          <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/github.svg" alt="GitHub Repo Link" style="width: 50px" />
+        </a>
+      </div>
+      <div>Coded with ❤️ for music</div>
+    </footer>
+    <script>
+      // Get the form and button elements
+      const form = document.querySelector('form');
+      const button = document.querySelector('#split_button');
+
+      // Add event listener for form submit
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        button.setAttribute('disabled', true);
+
+        const loadingSpinner = document.querySelector('#loading');
+        loadingSpinner.style.display = 'block';
+
+        const inputLink = document.querySelector('#input_link_1').value;
+        const inputLink2 = document.querySelector('#input_link_2').value;
+
+        if (!inputLink.trim()) {
+          loadingSpinner.style.display = 'none';
+          button.removeAttribute('disabled');
+          return Promise.resolve(); // Resolve with a void value
+        }
+
+        window.location.href =
+          window.location.href.split('?')[0] +
+          '?link=' +
+          encodeURIComponent(inputLink) + '&link2=' + encodeURIComponent(inputLink2);
+      });
+    </script>
+  </div>
+</body>
+</html>

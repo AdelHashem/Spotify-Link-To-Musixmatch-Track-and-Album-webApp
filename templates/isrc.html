@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9CGEX232D0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-9CGEX232D0');
+  </script>
+    <title>Spotify Data</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta content="Spotify To Mxm" property="og:title" />
+    <meta
+      content="Get Musixmatch Link, ISRC, Track ID, Album Link From Spotify Link"
+      property="og:description"
+    />
+    <meta content="#ff6050" data-react-helmet="true" name="theme-color" />
+  </head>
+  <body>
+    <div id="offline-div" spellcheck="true" style="display: none">
+      <h3
+        style="
+          font-size: 50px;
+          margin: 0;
+          padding: 0;
+          color: #ff5900;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        "
+      >
+        No Internet Connection
+      </h3>
+      <p
+        style="
+          font-size: 30px;
+          margin: 0;
+          padding: 0;
+          color: #ff0000;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        "
+      >
+        Make sure you're connected to the internet.
+      </p>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <ul>
+        <li><a href="/">Home Page</a></li>
+        <li><a href="/spotify">Spotify Data</a></li>
+        <li><a href="/split">Split Checker</a></li>
+      </ul>
+    </nav>
+
+
+    <div class="container">
+      <h1>Get Spotify Data</h1>
+      <form action="/" method="GET">
+        <label for="input_link">Spotify Track|Album Link:</label>
+        <input
+          type="text"
+          id="input_link"
+          name="link"
+          placeholder="Enter Spotify track|album link here"
+        />
+        <button type="submit" id="process_button">Get links</button>
+        <div class="loading" id="loading"></div>
+      </form>
+      <div class="output" id="output">
+        {% if tracks_data %}
+        <div class="row">
+          {% for track in tracks_data %} {% if track.isrc is defined %}
+          <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="card">
+              <img src="{{ track.image }}" alt="{{ track.track_name }}" />
+              <div class="card-details">
+                <h5 class="card-title">{{ track.track.name }}</h5>
+                
+                <p class="card-text">
+                  Album: {{ track.track.album.name }}
+                </p>
+                <p class="card-text">ISRC: {{ track.isrc }}</p>
+                {% if track.track.available_markets[0] %}
+                  <p class="card-text"><a href="javascript:void(0)" class="card-link show-countries-btn">Available Markets</a></p>
+                  {% else %}
+                  <p class="card-text"> No Available Markets</p>
+                  {% endif %}
+                
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <div class="card">
+            <p class="card-text">{{ track }}</p>
+          </div>
+          {% endif %} {% endfor %}
+        </div>
+
+        {% if tracks_data[0].track is defined %}
+        <script>
+          // Function to convert ISO codes to country names
+          async function convertCodesToCountryNames(isoCodes) {
+            const response = await fetch('static/countries.json');
+            const countryMapping = await response.json();
+      
+            const countryNames = isoCodes.map(code => countryMapping[code] || 'Unknown Country');
+            return countryNames;
+          }
+      
+          // Function to display the countries in a modal
+          async function showCountriesModal() {
+            const isoCodes = {{ tracks_data[0].track.available_markets|tojson }};
+            const countryNames = await convertCodesToCountryNames(isoCodes);
+      
+            const countriesList = document.getElementById('countries-list');
+            countriesList.innerHTML = ''; // Clear any previous content
+      
+            if (countryNames.length > 0) {
+              countryNames.forEach(countryName => {
+                const li = document.createElement('li');
+                li.textContent = countryName;
+                countriesList.appendChild(li);
+              });
+            } else {
+              const li = document.createElement('li');
+              li.textContent = 'No countries found.';
+              countriesList.appendChild(li);
+            }
+      
+            const modal = document.querySelector('.modal');
+            modal.style.display = 'block';
+      
+           
+            // Attach the close event to the "Close" button
+            document.querySelector('.close').addEventListener('click', closeModal);
+      
+            // Attach the event listener for clicks outside the modal
+            document.addEventListener('click', handleClickOutsideModal);
+            
+          }
+  
+          function closeModal() {
+              const modal = document.querySelector('.modal');
+              modal.style.display = 'none';
+          }
+          // Function to handle clicks outside the modal
+          function handleClickOutsideModal(event) {
+              const modal = document.querySelector('.modal');
+              if (event.target === modal) {
+              closeModal();
+              }
+          }
+          // Attach the function to the button click event
+          //document.getElementById('show-countries-btn').addEventListener('click', showCountriesModal);
+          const showCountriesBtns = document.querySelectorAll('.show-countries-btn');
+          showCountriesBtns.forEach(btn => {
+          btn.addEventListener('click', showCountriesModal);
+          });
+  
+          // Attach the event listener for clicks outside the modal
+          document.addEventListener('click', handleClickOutsideModal);
+          </script>
+          {% endif %}
+
+
+        {% endif %} 
+      </div>
+      <footer>
+        <script
+          defer
+          src="https://spotify-to-mxm.vercel.app/_vercel/insights/script.js"
+        ></script>
+        <div class="github_link">
+          <a
+            href="https://github.com/Ad
+
+elHashem/Spotify-Link-To-Musixmatch-Track-and-Album-webApp"
+            target="_blank"
+          >
+            <img
+              src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/github.svg"
+              alt="GitHub Repo Link"
+              style="width: 50px"
+            />
+          </a>
+        </div>
+        <div>Coded with ❤️ for music</div>
+      </footer>
+     
+      <script src="{{ url_for('static', filename='script.js') }}"></script>
+    </div>
+    <!-- The Modal -->
+    <div id="countries-modal" class="modal">
+        <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Countries</h2>
+        <ul id="countries-list"></ul>
+        </div>
+    </div>
+  </body>
+</html>
