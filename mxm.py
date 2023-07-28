@@ -38,18 +38,20 @@ class MXM:
             return str(e)
 
     async def Track_links(self, sp_data):
-        isrc = sp_data["isrc"]
-        track = await self.track_get(isrc)
-        try:
-            id = track["message"]["body"]["track"]["commontrack_id"]
-        except TypeError as e:
-            return track
+        if isinstance(sp_data, dict):
+            track = await self.track_get(sp_data.get("isrc"))
+            try:
+                id = track["message"]["body"]["track"]["commontrack_id"]
+            except TypeError as e:
+                return track
 
-        track = track["message"]["body"]["track"]
-        track["isrc"] = sp_data["isrc"]
-        track["image"] = sp_data["image"]
-        
-        return track
+            track = track["message"]["body"]["track"]
+            track["isrc"] = sp_data["isrc"]
+            track["image"] = sp_data["image"]
+            
+            return track
+        else:
+            return sp_data
     
     async def matcher_links(self, sp_data):
         id = sp_data["track"]["id"]
@@ -67,7 +69,9 @@ class MXM:
     async def Tracks_Data(self, sp_data):
         links = []
         tracks = await self.tracks_get(sp_data)
-        if  sp_data[0].get("track"):
+
+
+        if  isinstance(sp_data[0], dict) and sp_data[0].get("track"):
             matchers = await self.tracks_matcher(sp_data)
         else:
             return tracks

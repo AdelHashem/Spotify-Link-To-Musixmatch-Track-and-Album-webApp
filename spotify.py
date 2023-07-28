@@ -50,7 +50,11 @@ class Spotify:
                         image = i["album"]["images"][1]["url"]
                     except:
                         image = None
-                    isrcs.append({"isrc":i["external_ids"]["isrc"],"image":image ,"track":i})
+
+                    if i["external_ids"].get("isrc"):
+                        isrcs.append({"isrc":i["external_ids"]["isrc"],"image":image ,"track":i})
+                    else:
+                        isrcs.append("The Track is missing its ISRC on Spotify.")
                 else:
                     return "Error in get_isrc"
                 
