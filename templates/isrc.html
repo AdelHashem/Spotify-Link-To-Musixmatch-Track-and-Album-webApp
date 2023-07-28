@@ -86,6 +86,12 @@
                 
                 <p class="card-text">
                   Album: {{ track.track.album.name }}
+                  <a
+                    href="{{ track.track.album.external_urls.spotify }}"
+                    class="card-link"
+                    target="_blank"
+                    >{{ track.track.album.name }}</a>
+                
                 </p>
                 <p class="card-text">ISRC: {{ track.isrc }}</p>
                 {% if track.track.available_markets[0] %}
