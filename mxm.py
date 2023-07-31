@@ -128,6 +128,7 @@ class MXM:
                     """
                     links.append(track)
                     continue
+                else: links.append(track)
             elif isinstance(track, str) and isinstance(matcher, dict):
                 if matcher.get("album_name") == sp_data[i]["track"]["album"]["name"]:
                     links.append(matcher)
