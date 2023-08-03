@@ -67,9 +67,9 @@ async def split():
         if match:
             sp_data1 = sp.get_isrc(link)
             sp_data2 = sp.get_isrc(link2)
-            track1 = await mxm.Tracks_Data(sp_data1)
+            track1 = await mxm.Tracks_Data(sp_data1,True)
             track1 = track1[0]
-            track2 = await mxm.Tracks_Data(sp_data2)
+            track2 = await mxm.Tracks_Data(sp_data2,True)
             track2 = track2[0]
             await client.close_session()
             track1["track"] = sp_data1[0]["track"]

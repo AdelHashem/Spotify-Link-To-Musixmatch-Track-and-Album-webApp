@@ -66,7 +66,7 @@ class MXM:
         track["image"] = sp_data["image"]
         return track
 
-    async def Tracks_Data(self, sp_data):
+    async def Tracks_Data(self, sp_data, split_check = False):
         links = []
         tracks = await self.tracks_get(sp_data)
 
@@ -79,6 +79,10 @@ class MXM:
         for i in range(len(tracks)):
             track = tracks[i]
             matcher = matchers[i]
+            if split_check:
+                links.append(track)
+                continue
+
             # detecting what issues can facing the track
             if isinstance(track, dict) and isinstance(matcher, dict):
 
