@@ -69,8 +69,10 @@ async def split():
             sp_data2 = sp.get_isrc(link2)
             track1 = await mxm.Tracks_Data(sp_data1,True)
             track1 = track1[0]
+            if isinstance(track1,str): return render_template('split.html', error= "track1: " + track1)
             track2 = await mxm.Tracks_Data(sp_data2,True)
             track2 = track2[0]
+            if isinstance(track2,str): return render_template('split.html', error= "track2: " + track1)
             await client.close_session()
             track1["track"] = sp_data1[0]["track"]
             track2["track"] = sp_data2[0]["track"]
@@ -94,7 +96,7 @@ async def split():
             return render_template('split.html', split_result ={"track1":track1, "track2":track2}
                                     ,message = message)
         else: 
-            return render_template('isrc.html', tracks_data= ["Wrong Spotify Link"])
+            return render_template('split.html', error= "Wrong Spotify Link")
         
     else:
         return render_template('split.html')
