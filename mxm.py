@@ -137,6 +137,7 @@ class MXM:
                 if matcher.get("album_name") == sp_data[i]["track"]["album"]["name"]:
                     links.append(matcher)
                     continue
+                else: links.append(matcher)
             elif isinstance(track, dict) and isinstance(matcher, str):
                 track["note"] = "This track may missing its Spotify id"
                 links.append(track)
