@@ -1,9 +1,10 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, make_response
 from asgiref.wsgi import WsgiToAsgi
 from mxm import MXM
 from spotify import Spotify
 import re
 import aiohttp
+import datetime
 
 class StartAiohttp:
     session = None
@@ -35,8 +36,9 @@ sp = Spotify()
 async def index():
     link = request.args.get('link')
     if link:
+        key = request.cookies.get("api_key",None)
         client.start_session()
-        mxm = MXM(session=client.get_session())
+        mxm = MXM(key,session=client.get_session())
         try:
             if(len(link) < 12): return render_template('index.html', tracks_data= ["Wrong Spotify Link Or Wrong ISRC"])
             elif re.search(r'artist/(\w+)', link): return render_template('index.html',artist=sp.artist_albums(link,[]))
@@ -60,8 +62,9 @@ async def split():
     link = request.args.get('link')
     link2 = request.args.get('link2')
     if link and link2:
+        key = request.cookies.get("api_key",None)
         client.start_session()
-        mxm = MXM(session=client.get_session())
+        mxm = MXM(key,session=client.get_session())
         match = re.search(r'open.spotify.com', link) and re.search(r'track', link)
         match =  match and re.search(r'open.spotify.com', link2) and re.search(r'track', link2)
         if match:
@@ -114,6 +117,33 @@ def isrc():
     else: 
         return render_template('isrc.html')
 
+
+@app.route('/api', methods=['GET'])
+async def setAPI():
+    key = request.args.get('key')
+    delete = request.args.get("delete_key")
+    if key:
+        # check the key
+        client.start_session()
+        mxm = MXM(key,session=client.get_session())
+        sp_data = [{"isrc": "DGA072332812", "image": None}]
+        mxmLinks = await mxm.Tracks_Data(sp_data)
+        client.close_session()
+        if isinstance(mxmLinks[0],str):
+            return render_template("api.html",error = "Please Enter A Vaild Key")
+        resp = make_response(render_template("api.html", key = key))
+        expire_date = datetime.datetime.now() + datetime.timedelta(days=360)
+        resp.set_cookie("api_key",key,expires = expire_date)
+        return resp
+    elif delete:
+        resp = make_response(render_template("api.html"))
+        resp.delete_cookie("api_key")
+        return resp
+    else:
+        key = request.cookies.get('api_key')
+        print(key)
+        if key: return render_template("api.html", key = key)
+        return render_template("api.html")
 
 
 asgi_app = WsgiToAsgi(app)
