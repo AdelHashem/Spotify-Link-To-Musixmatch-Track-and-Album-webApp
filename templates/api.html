@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9CGEX232D0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-9CGEX232D0');
+  </script>
+    <title>Spotify to Musixmatch Link</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta content="Spotify To Mxm" property="og:title" />
+    <meta
+      content="Get Musixmatch Link, ISRC, Track ID, Album Link From Spotify Link"
+      property="og:description"
+    />
+    <meta content="#ff6050" data-react-helmet="true" name="theme-color" />
+  </head>
+  <body>
+    <div id="offline-div" spellcheck="true" style="display: none">
+      <h3
+        style="
+          font-size: 50px;
+          margin: 0;
+          padding: 0;
+          color: #ff5900;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        "
+      >
+        No Internet Connection
+      </h3>
+      <p
+        style="
+          font-size: 30px;
+          margin: 0;
+          padding: 0;
+          color: #ff0000;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        "
+      >
+        Make sure you're connected to the internet.
+      </p>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <ul>
+        <li><a href="/">Home Page</a></li>
+        <li><a href="/spotify">Spotify Data</a></li>
+        <li><a href="/split">Split Checker</a></li>
+        <li><a href="/api">Set API</a></li>
+      </ul>
+    </nav>
+
+
+    <div class="container">
+      <h1>Set Your API Key</h1>
+      <form action="/" method="GET">
+        <label for="input_link">Enter Your API Key:</label>
+        <input
+          type="text"
+          id="key"
+          name="input_key"
+          placeholder="Enter Your API Key:"
+        />
+        <button type="submit" id="send_api">Save</button>
+        <div class="loading" id="loading"></div>
+      </form>
+      <div class="output" id="output">
+        <p style="text-align: center;">This Page is for any one want to use the tool with their Private API key</p>
+        <p></p>
+        {% if key %}
+        <div class="row">
+          <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="card">
+              <div class="card-details">
+              <p class="card-text">Your Key: {{ key }}</p>
+              <p class="card-text">
+                <a class="card-link" href="?delete_key=True">Delete your key</a>
+              </p>
+            </div>
+            </div>
+          </div>
+        </div>
+        {% elif error%}
+          <div class="row">
+            <div class="col-sm-6 col-md-4 col-lg-3">
+              <div class="card">
+                <div class="card-details">
+                <p class="card-text">Erorr: {{ error }}</p>
+                </div></div></div></div>
+        {% endif %}
+
+        <h4><span style="color: #ff0000;">How To Get An API Key:</span></h4>
+        <ol>
+        <li>signup in&nbsp;<a href="https://developer.musixmatch.com/signup">https://developer.musixmatch.com/signup</a><a href="https://developer.musixmatch.com/signup" target="_blank" rel="noopener"></a></li>
+        <li>Go to&nbsp;<a href="https://developer.musixmatch.com/admin/applications" target="_blank" rel="noopener">https://developer.musixmatch.com/admin/applications</a></li>
+        <li>Copy the key and enter it on this page</li>
+        <li>Please save and pin your key on the clipboard as it is saved in the browser you use only. If you changed browsers, you'll need to re-enter it</li>
+        </ol>
+        <h4><span style="color: #ff0000;">How can I return to use the tool API:</span></h4>
+        <ul>
+        <li>Delete your key from the page here or delete the site cookies</li>
+        </ul>
+        <h4><span style="color: #ff0000;">Would the tool use my key for other users:</span></h4>
+        <ul>
+        <li>No, your key is saved in your cookies not in a DB</li>
+        </ul>
+      </div>
+      <footer>
+        <script
+          defer
+          src="https://spotify-to-mxm.vercel.app/_vercel/insights/script.js"
+        ></script>
+        <div class="github_link">
+          <a
+            href="https://github.com/Ad
+
+elHashem/Spotify-Link-To-Musixmatch-Track-and-Album-webApp"
+            target="_blank"
+          >
+            <img
+              src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/github.svg"
+              alt="GitHub Repo Link"
+              style="width: 50px"
+            />
+          </a>
+        </div>
+        <div class="instructions">
+          <a href="#" id="how_to_use">How to Use?</a>
+        </div>
+        <div>Coded with ❤️ for music</div>
+      </footer>
+      <script>
+        // Get the form and button elements
+        const form = document.querySelector('form');
+        const button = document.querySelector('#send_api');
+  
+        // Add event listener for form submit
+        form.addEventListener('submit', (event) => {
+          event.preventDefault();
+  
+          button.setAttribute('disabled', true);
+  
+          const loadingSpinner = document.querySelector('#loading');
+          loadingSpinner.style.display = 'block';
+  
+          const key = document.querySelector('#key').value;
+  
+          if (!key.trim()) {
+            loadingSpinner.style.display = 'none';
+            button.removeAttribute('disabled');
+            return Promise.resolve(); // Resolve with a void value
+          }
+  
+          window.location.href =
+            window.location.href.split('?')[0] +
+            '?key=' +
+            encodeURIComponent(key);
+        });
+      </script>
+    </div>
+  </body>
+</html>
