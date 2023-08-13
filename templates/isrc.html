@@ -65,12 +65,12 @@
     <div class="container">
       <h1>Get Spotify Data</h1>
       <form action="/" method="GET">
-        <label for="input_link">Spotify Track|Album Link:</label>
+        <label for="input_link">Spotify Track|Album Link or ISRC:</label>
         <input
           type="text"
           id="input_link"
           name="link"
-          placeholder="Enter Spotify track|album link here"
+          placeholder="Enter Spotify track|album link or an ISRC here"
         />
         <button type="submit" id="process_button">Get links</button>
         <div class="loading" id="loading"></div>
@@ -95,8 +95,8 @@
                 
                 </p>
                 <p class="card-text">ISRC: {{ track.isrc }}</p>
-                {% if track.track.available_markets[0] %}
-                  <p class="card-text"><a href="javascript:void(0)" class="card-link show-countries-btn">Available Markets</a></p>
+                {% if track.track.available_markets %}
+                  <p class="card-text"><a href="javascript:void(0)" onclick="showCountriesModal({{ loop.index0 }})" class="card-link show-countries-btn">Available Markets</a></p>
                   {% else %}
                   <p class="card-text"> No Available Markets</p>
                   {% endif %}
@@ -121,10 +121,10 @@
             const countryNames = isoCodes.map(code => countryMapping[code] || 'Unknown Country');
             return countryNames;
           }
-      
+          const tracks = {{ tracks_data|tojson }};
           // Function to display the countries in a modal
-          async function showCountriesModal() {
-            const isoCodes = {{ tracks_data[0].track.available_markets|tojson }};
+          async function showCountriesModal(id) {
+            const isoCodes = tracks[id].track.available_markets;
             const countryNames = await convertCodesToCountryNames(isoCodes);
       
             const countriesList = document.getElementById('countries-list');
@@ -169,7 +169,7 @@
           //document.getElementById('show-countries-btn').addEventListener('click', showCountriesModal);
           const showCountriesBtns = document.querySelectorAll('.show-countries-btn');
           showCountriesBtns.forEach(btn => {
-          btn.addEventListener('click', showCountriesModal);
+          //btn.addEventListener('click', showCountriesModal);
           });
   
           // Attach the event listener for clicks outside the modal
