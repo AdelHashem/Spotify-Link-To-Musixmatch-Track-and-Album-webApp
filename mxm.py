@@ -3,6 +3,7 @@ import re
 import jellyfish
 import Asyncmxm 
 import asyncio
+from urllib.parse import unquote
 
 
 class MXM:
@@ -160,7 +161,7 @@ class MXM:
     
     async def album_sp_id(self,link):
         site = re.search(r"musixmatch.com",link)
-        match = re.search(r'album/([\w-]+/[\w-]+)|album/(\d+)|lyrics/([\w-]+/[\w-]+)', link)
+        match = re.search(r'album/([\w-]+/[\w-]+)|album/(\d+)|lyrics/([\w-]+/[\w-]+)', unquote(link))
         if match and site:
             try:
                 if match.group(1):
