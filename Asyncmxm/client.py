@@ -520,13 +520,14 @@ class Musixmatch(object):
         params = {k: v for k, v in locals().items() if v is not None and k !='self'}
         return await self._api_call("get", "artist.related.get", params)
     
-    async def album_get(self, album_id):
+    async def album_get(self, album_id=None,album_vanity_id=None):
         """
         Get the album object using the musixmatch id.
 
         :param album_id: The musixmatch album id.
         """
-        return await self._api_call("get", "album.get", locals())
+        params = {k: v for k, v in locals().items() if v is not None and k !='self'}
+        return await self._api_call("get", "album.get", params)
     
     async def album_tracks_get(self, album_id,
                          f_has_lyrics = 0,
