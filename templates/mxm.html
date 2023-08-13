@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9CGEX232D0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-9CGEX232D0');
+  </script>
+    <title>Musixmatch Source</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta content="Spotify To Mxm" property="og:title" />
+    <meta
+      content="Musixmatch link to source Link"
+      property="og:description"
+    />
+    <meta content="#ff6050" data-react-helmet="true" name="theme-color" />
+  </head>
+  <body>
+    <div id="offline-div" spellcheck="true" style="display: none">
+      <h3
+        style="
+          font-size: 50px;
+          margin: 0;
+          padding: 0;
+          color: #ff5900;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        "
+      >
+        No Internet Connection
+      </h3>
+      <p
+        style="
+          font-size: 30px;
+          margin: 0;
+          padding: 0;
+          color: #ff0000;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        "
+      >
+        Make sure you're connected to the internet.
+      </p>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <ul>
+        <li><a href="/">Home Page</a></li>
+        <li><a href="/spotify">Spotify Data</a></li>
+        <li><a href="/mxm">MXM Source</a></li>
+        <li><a href="/split">Split Checker</a></li>
+        <li><a href="/api">Set API</a></li>
+      </ul>
+    </nav>
+
+
+    <div class="container">
+      <h1>Musixmatch Album source</h1>
+      <form action="/" method="GET">
+        <label for="input_link">Musixmatch Album|track Link:</label>
+        <input
+          type="text"
+          id="input_link"
+          name="link"
+          placeholder="Enter Spotify track|album link or an ISRC here"
+        />
+        <button type="submit" id="process_button">Get links</button>
+        <div class="loading" id="loading"></div>
+      </form>
+      <div class="output" id="output">
+        <p style="text-align: center;">The tool can only get the source of the album.</p>
+        <p style="text-align: center;">If a track page connected to more than one album, 
+          it's better to enter the album page.</p>
+        {% if album %}
+        <div class="row">
+          <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="card">
+              <div class="card-details">
+                <h5 class="card-title">{{ album.album_name }}</h5>
+                
+                <p class="card-text">
+                  Album: 
+                  <a
+                    href="https://www.musixmatch.com/album/{{ album.album_id }}"
+                    class="card-link"
+                    target="_blank"
+                    >{{ album.album_name }}</a>
+                
+                </p>
+
+                <p class="card-text">
+                  Album ID: {{ album.album_id }}
+                </p>
+
+                {% if album.external_ids.spotify %}
+                <p class="card-text">
+                    Spotify source:
+                <div class="list">
+                <ul>
+                {% for id in album.external_ids.spotify %}
+                <li>
+                  <a
+                    href="https://open.spotify.com/album/{{ id }}"
+                    class="card-link"
+                    target="_blank"
+                    >{{ id }}</a>
+                </li>
+                </p>
+                {% endfor %}
+                </ul>
+                </div>
+                {% else %}
+                <p class="card-text">
+                    Spotify source: No Connected Source
+                </p>
+                {% endif %}
+                {% for id in album.external_ids.itunes %}
+                <p class="card-text">
+                  Apple Music source:
+              <div class="list">
+              <ul>
+              {% for id in album.external_ids.itunes %}
+              <li>
+                <a
+                  href="https://music.apple.com/album/{{ id }}"
+                  class="card-link"
+                  target="_blank"
+                  >{{ id }}</a>
+              </li>
+              </p>
+              {% endfor %}
+              </ul>
+              </div>
+              {% else %}
+              <p class="card-text">
+                  Apple Music source: No Connected Source
+              </p>
+
+                {% endfor %}
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %} 
+      </div>
+      <footer>
+        <script
+          defer
+          src="https://spotify-to-mxm.vercel.app/_vercel/insights/script.js"
+        ></script>
+        <div class="github_link">
+          <a
+            href="https://github.com/Ad
+
+elHashem/Spotify-Link-To-Musixmatch-Track-and-Album-webApp"
+            target="_blank"
+          >
+            <img
+              src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/github.svg"
+              alt="GitHub Repo Link"
+              style="width: 50px"
+            />
+          </a>
+        </div>
+        <div>Coded with ❤️ for music</div>
+      </footer>
+     
+      <script src="{{ url_for('static', filename='script.js') }}"></script>
+    </div>
+    <!-- The Modal -->
+    <div id="countries-modal" class="modal">
+        <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Countries</h2>
+        <ul id="countries-list"></ul>
+        </div>
+    </div>
+  </body>
+</html>
