@@ -161,7 +161,7 @@ class MXM:
     
     async def album_sp_id(self,link):
         site = re.search(r"musixmatch.com",link)
-        match = re.search(r'album/([\w-.]+/[\w-.]+)|album/(\d+)|lyrics/([\w-.]+/[\w-.]+)', unquote(link))
+        match = re.search(r'album/([^?]+/[^?]+)|album/(\d+)|lyrics/([^?]+/[^?]+)', unquote(link))
         if match and site:
             try:
                 if match.group(1):
