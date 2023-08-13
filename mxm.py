@@ -19,10 +19,11 @@ class MXM:
     def change_key(self, key):
         self.key = key
 
-    async def track_get(self, isrc=None, commontrack_id=None) -> dict:
+    async def track_get(self, isrc=None, commontrack_id=None, vanity_id =None) -> dict:
         try:
             response = await self.musixmatch.track_get(
-                track_isrc=isrc, commontrack_id=commontrack_id
+                track_isrc=isrc, commontrack_id=commontrack_id,
+                commontrack_vanity_id= vanity_id
             )
             return response
         except Asyncmxm.exceptions.MXMException as e:
@@ -156,4 +157,24 @@ class MXM:
         tasks = [asyncio.create_task(c) for c in coro]
         tracks = await asyncio.gather(*tasks)
         return tracks
+    
+    async def album_sp_id(self,link):
+        site = re.search(r"musixmatch.com",link)
+        match = re.search(r'album/([\w-]+/[\w-]+)|album/(\d+)|lyrics/([\w-]+/[\w-]+)', link)
+        if match and site:
+            try:
+                if match.group(1):
+                    album = await self.musixmatch.album_get(album_vanity_id=match.group(1))
+                elif match.group(2):
+                    album = await self.musixmatch.album_get(match.group(2))
+                else:
+                    track = await self.musixmatch.track_get(commontrack_vanity_id=match.group(3))
+                    album_id = track["message"]["body"]["track"]["album_id"]
+                    album = await self.musixmatch.album_get(album_id)
+                print(album)
+                return {"album": album["message"]["body"]["album"]}
+            except Asyncmxm.exceptions.MXMException as e:
+                return {"error": str(e)}
+        else:
+            return {"error": "Unsupported link."}
         
