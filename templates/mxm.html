@@ -153,6 +153,19 @@
           </div>
         </div>
         {% endif %} 
+        {% if error %}
+        <div class="row">
+          <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="card">
+              <div class="card-details">
+                <p class="card-text">error: {{ error }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+
       </div>
       <footer>
         <script
