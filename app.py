@@ -112,7 +112,11 @@ def isrc():
         if match:
             return render_template('isrc.html', tracks_data= sp.get_isrc(link))
         
-        else: 
+        else:
+            # the link is an isrc code
+            if len(link) == 12:
+                #search by isrc
+                return render_template('isrc.html', tracks_data= sp.search_by_isrc(link))
             return render_template('isrc.html', tracks_data= ["Wrong Spotify Link"])
     else: 
         return render_template('isrc.html')
@@ -145,6 +149,24 @@ async def setAPI():
         if key: return render_template("api.html", key = key)
         return render_template("api.html")
 
+
+@app.route('/mxm', methods=['GET'])
+async def mxm_to_sp():
+    key = request.cookies.get("api_key",None)
+    link = request.args.get('link')
+    if link:
+        mxm = MXM(key,session=client.get_session())
+        album = await mxm.album_sp_id(link)
+        await client.close_session()
+        return render_template("mxm.html", album = album.get("album"), error = album.get("error"))
+
+
+
+        return album
+
+        
+    else:
+        return render_template("mxm.html")
 
 asgi_app = WsgiToAsgi(app)
 if __name__ == '__main__':
