@@ -17,6 +17,7 @@ class Spotify:
         #if client_id is not None:
             #self.ChangeAuth(self, client_id, client_secret)
 
+
     def ChangeAuth(self, client_id, client_secret):
         cred = SpotifyClientCredentials(client_id,client_secret)
         self.sp = spotipy.Spotify(client_credentials_manager=cred)
@@ -88,3 +89,14 @@ class Spotify:
         
         else:
             return None
+        
+    
+    def search_by_isrc(self, isrc):
+        data = self.sp.search(f"isrc:{isrc}")
+        if data["tracks"]["items"]:
+            track = data["tracks"]["items"][0]
+            if isrc == track["external_ids"]["isrc"]:
+                img = track["album"]["images"][1]["url"]
+                return [{"isrc": track["external_ids"]["isrc"], "image":img,"track":track}]
+        return["No track found with this ISRC"]
+        
