@@ -123,7 +123,8 @@
                     Spotify source: No Connected Source
                 </p>
                 {% endif %}
-                {% for id in album.external_ids.itunes %}
+
+                {% if album.external_ids.itunes %}
                 <p class="card-text">
                   Apple Music source:
               <div class="list">
@@ -144,10 +145,7 @@
               <p class="card-text">
                   Apple Music source: No Connected Source
               </p>
-
-                {% endfor %}
-
-
+              {% endif %}
               </div>
             </div>
           </div>

@@ -14,6 +14,7 @@ class StartAiohttp:
         
 
     def start_session(self):
+        self.close_session()
         connector = aiohttp.TCPConnector(limit=self.limit, limit_per_host=self.limit_per_host)
         self.session = aiohttp.ClientSession(connector=connector)
 
@@ -155,16 +156,11 @@ async def mxm_to_sp():
     key = request.cookies.get("api_key",None)
     link = request.args.get('link')
     if link:
+        client.start_session()
         mxm = MXM(key,session=client.get_session())
         album = await mxm.album_sp_id(link)
         await client.close_session()
-        return render_template("mxm.html", album = album.get("album"), error = album.get("error"))
-
-
-
-        return album
-
-        
+        return render_template("mxm.html", album = album.get("album"), error = album.get("error"))        
     else:
         return render_template("mxm.html")
 
