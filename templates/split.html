@@ -81,8 +81,8 @@
                               </tr>
                             <tr>
                             <td>Musixmatch Link:</td>
-                            <td><a href="{{ split_result.track1.track_share_url }}" target="_blank">Musixmatch</a></td>
-                            <td><a href="{{ split_result.track2.track_share_url }}" target="_blank">Musixmatch</a></td>
+                            <td><a href="{{ split_result.track1.track_share_url.split('?')[0] }}" target="_blank">Musixmatch</a></td>
+                            <td><a href="{{ split_result.track2.track_share_url.split('?')[0] }}" target="_blank">Musixmatch</a></td>
                             </tr>
                         </tbody>
                         <tfoot>
