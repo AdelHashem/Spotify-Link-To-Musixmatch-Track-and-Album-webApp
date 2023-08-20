@@ -2,7 +2,7 @@ class MXMException(Exception):
 
     codes = {
         400: "The request had bad syntax or was inherently impossible to be satisfied.",
-        401: "We have hit the Musixmatch API limit for today. Sorry, I can't do much about it",
+        401: "We have hit the Musixmatch API limit for today. Sorry, I can't do much about it, but you can set up a private one.",
         402: "The usage limit has been reached, either you exceeded per day requests limits or your balance is insufficient.",
         403: "You are not authorized to perform this operation.",
         404: "The requested resource was not found.",
