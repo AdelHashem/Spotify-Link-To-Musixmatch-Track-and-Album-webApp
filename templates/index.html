@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9CGEX232D0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-9CGEX232D0');
+  </script>
     <title>Spotify to Musixmatch Link</title>
     <link
       rel="stylesheet"
@@ -41,6 +50,19 @@
         Make sure you're connected to the internet.
       </p>
     </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <ul>
+        <li><a href="/">Home Page</a></li>
+        <li><a href="/spotify">Spotify Data</a></li>
+        <li><a href="/mxm">MXM Source</a></li>
+        <li><a href="/split">Split Checker</a></li>
+        <li><a href="/api">Set API</a></li>
+      </ul>
+    </nav>
+
+
     <div class="container">
       <h1>Spotify to Musixmatch Link</h1>
       <form action="/" method="GET">
@@ -89,12 +111,21 @@
                 <p class="card-text">
                   Link:
                   <a
-                    href="{{ track.track_share_url }}"
+                    href="{{ track.track_share_url.split('?')[0] }}"
                     class="card-link"
                     target="_blank"
                     >Musixmatch</a
+                  >,
+                  <a
+                    href="{{ track.beta.split('?')[0] }}"
+                    class="card-link"
+                    target="_blank"
+                    >Beta Musixmatch</a
                   >
                 </p>
+                {% if track.note %}
+                  <p class="card-text">Note: {{ track.note|safe }}</p>
+                {% endif %}
               </div>
             </div>
           </div>
@@ -153,6 +184,7 @@ elHashem/Spotify-Link-To-Musixmatch-Track-and-Album-webApp"
         <div class="instructions">
           <a href="#" id="how_to_use">How to Use?</a>
         </div>
+        <div>Coded with ❤️ for music</div>
       </footer>
       <div class="note">
         <span class="close" id="closenote">&times;</span>
