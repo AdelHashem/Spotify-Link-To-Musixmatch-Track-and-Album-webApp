@@ -130,15 +130,16 @@ async def setAPI():
     if key:
         # check the key
         client.start_session()
-        mxm = MXM(key,session=client.get_session())
+        mxm = MXM(key, session=client.get_session())
         sp_data = [{"isrc": "DGA072332812", "image": None}]
         mxmLinks = await mxm.Tracks_Data(sp_data)
         client.close_session()
-        if isinstance(mxmLinks[0],str):
-            return render_template("api.html",error = "Please Enter A Vaild Key")
-        resp = make_response(render_template("api.html", key = key))
+        if isinstance(mxmLinks[0], str):
+            return render_template("api.html", error="Please Enter A Valid Key")
+        censored_key = '*' * len(key) 
+        resp = make_response(render_template("api.html", key=censored_key))
         expire_date = datetime.datetime.now() + datetime.timedelta(days=360)
-        resp.set_cookie("api_key",key,expires = expire_date)
+        resp.set_cookie("api_key", key, expires=expire_date)
         return resp
     elif delete:
         resp = make_response(render_template("api.html"))
@@ -146,10 +147,11 @@ async def setAPI():
         return resp
     else:
         key = request.cookies.get('api_key')
-        print(key)
-        if key: return render_template("api.html", key = key)
-        return render_template("api.html")
-
+        censored_key = '*' * len(key) if key else None 
+        print(censored_key)
+        if key:
+            return render_template("api.html", key=censored_key)
+        return render_template("api.html", key=censored_key)
 
 @app.route('/mxm', methods=['GET'])
 async def mxm_to_sp():
