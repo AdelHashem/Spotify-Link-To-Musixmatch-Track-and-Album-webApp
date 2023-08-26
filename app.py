@@ -5,55 +5,112 @@ from spotify import Spotify
 import re
 import aiohttp
 import datetime
+import base64
+import hmac
+import json
+import hashlib
+
+with open('key.json') as json_file:
+    data = json.load(json_file)
+
+secret_key_value = data['secret_key']
+
+SECRET_KEY = secret_key_value
+
+SECRET_KEY = SECRET_KEY.encode('utf-8')
+
+
+def generate_token(payload):
+    header = {'alg': 'HS256', 'typ': 'JWT'}
+    encoded_header = base64.urlsafe_b64encode(
+        json.dumps(header).encode('utf-8')).rstrip(b'=')
+    encoded_payload = base64.urlsafe_b64encode(
+        json.dumps(payload).encode('utf-8')).rstrip(b'=')
+
+    signature = hmac.new(SECRET_KEY, encoded_header +
+                         b'.' + encoded_payload, hashlib.sha256).digest()
+    encoded_signature = base64.urlsafe_b64encode(signature).rstrip(b'=')
+
+    return encoded_header + b'.' + encoded_payload + b'.' + encoded_signature
+
+
+def verify_token(token):
+    encoded_header, encoded_payload, encoded_signature = token.split('.')
+
+    header = base64.urlsafe_b64decode(encoded_header + '==').decode('utf-8')
+    payload = base64.urlsafe_b64decode(encoded_payload + '==').decode('utf-8')
+
+    expected_signature = hmac.new(
+        SECRET_KEY, (encoded_header + '.' + encoded_payload).encode('utf-8'), hashlib.sha256).digest()
+    expected_encoded_signature = base64.urlsafe_b64encode(
+        expected_signature).rstrip(b'=')
+
+    if expected_encoded_signature != encoded_signature.encode('utf-8'):
+        return False
+
+    payload = json.loads(payload)
+    return payload
+
 
 class StartAiohttp:
     session = None
-    def __init__(self,limit, limit_per_host) -> None:
+
+    def __init__(self, limit, limit_per_host) -> None:
         self.limit = limit
         self.limit_per_host = limit_per_host
-        
 
     def start_session(self):
         self.close_session()
-        connector = aiohttp.TCPConnector(limit=self.limit, limit_per_host=self.limit_per_host)
+        connector = aiohttp.TCPConnector(
+            limit=self.limit, limit_per_host=self.limit_per_host)
         self.session = aiohttp.ClientSession(connector=connector)
 
     def get_session(self):
         return self.session
-
 
     async def close_session(self):
         if self.session:
             await self.session.close()
             self.session = None
 
-client = StartAiohttp(7,7)
+
+client = StartAiohttp(7, 7)
 
 
 app = Flask(__name__)
 sp = Spotify()
 
+
 @app.route('/', methods=['GET'])
 async def index():
     link = request.args.get('link')
     if link:
-        key = request.cookies.get("api_key",None)
-        client.start_session()
-        mxm = MXM(key,session=client.get_session())
-        try:
-            if(len(link) < 12): return render_template('index.html', tracks_data= ["Wrong Spotify Link Or Wrong ISRC"])
-            elif re.search(r'artist/(\w+)', link): return render_template('index.html',artist=sp.artist_albums(link,[]))
-            else: sp_data = sp.get_isrc(link) if len(link) > 12 else [{"isrc": link, "image": None}]
-        except Exception as e:
-            return render_template('index.html', tracks_data= [str(e)])
-            
-        mxmLinks = await mxm.Tracks_Data(sp_data)
-        if isinstance(mxmLinks, str):
-            return mxmLinks
-        
-        await client.close_session()
+        token = request.cookies.get('api_token')
+        if token:
+            payload = verify_token(token)
+            if payload:
+                key = payload.get("mxm-key")
 
-        return render_template('index.html', tracks_data= mxmLinks)
+                client.start_session()
+                mxm = MXM(key, session=client.get_session())
+                try:
+                    if (len(link) < 12):
+                        return render_template('index.html', tracks_data=["Wrong Spotify Link Or Wrong ISRC"])
+                    elif re.search(r'artist/(\w+)', link):
+                        return render_template('index.html', artist=sp.artist_albums(link, []))
+                    else:
+                        sp_data = sp.get_isrc(link) if len(link) > 12 else [
+                            {"isrc": link, "image": None}]
+                except Exception as e:
+                    return render_template('index.html', tracks_data=[str(e)])
+
+                mxmLinks = await mxm.Tracks_Data(sp_data)
+                if isinstance(mxmLinks, str):
+                    return mxmLinks
+
+                await client.close_session()
+
+                return render_template('index.html', tracks_data=mxmLinks)
 
     return render_template('index.html')
 
@@ -63,26 +120,34 @@ async def split():
     link = request.args.get('link')
     link2 = request.args.get('link2')
     if link and link2:
-        key = request.cookies.get("api_key",None)
-        client.start_session()
-        mxm = MXM(key,session=client.get_session())
-        match = re.search(r'open.spotify.com', link) and re.search(r'track', link)
-        match =  match and re.search(r'open.spotify.com', link2) and re.search(r'track', link2)
-        if match:
-            sp_data1 = sp.get_isrc(link)
-            sp_data2 = sp.get_isrc(link2)
-            track1 = await mxm.Tracks_Data(sp_data1,True)
-            track1 = track1[0]
-            if isinstance(track1,str): return render_template('split.html', error= "track1: " + track1)
-            track2 = await mxm.Tracks_Data(sp_data2,True)
-            track2 = track2[0]
-            if isinstance(track2,str): return render_template('split.html', error= "track2: " + track1)
-            await client.close_session()
-            track1["track"] = sp_data1[0]["track"]
-            track2["track"] = sp_data2[0]["track"]
-            try:
-                if track1["isrc"] != track2["isrc"] and track1["commontrack_id"] == track2["commontrack_id"]:
-                    message = f"""Can be splitted </br>
+        token = request.cookies.get('api_token')
+        if token:
+            payload = verify_token(token)
+            if payload:
+                key = payload.get("mxm-key")
+                client.start_session()
+                mxm = MXM(key, session=client.get_session())
+                match = re.search(r'open.spotify.com',
+                                  link) and re.search(r'track', link)
+                match = match and re.search(
+                    r'open.spotify.com', link2) and re.search(r'track', link2)
+                if match:
+                    sp_data1 = sp.get_isrc(link)
+                    sp_data2 = sp.get_isrc(link2)
+                    track1 = await mxm.Tracks_Data(sp_data1, True)
+                    track1 = track1[0]
+                    if isinstance(track1, str):
+                        return render_template('split.html', error="track1: " + track1)
+                    track2 = await mxm.Tracks_Data(sp_data2, True)
+                    track2 = track2[0]
+                    if isinstance(track2, str):
+                        return render_template('split.html', error="track2: " + track1)
+                    await client.close_session()
+                    track1["track"] = sp_data1[0]["track"]
+                    track2["track"] = sp_data2[0]["track"]
+                    try:
+                        if track1["isrc"] != track2["isrc"] and track1["commontrack_id"] == track2["commontrack_id"]:
+                            message = f"""Can be splitted </br>
                                 you can c/p:</br>
                                 :mxm: <a href="{track1["track_share_url"]}" target="_blank">MXM Page</a> </br>
                                 :spotify: <a href="{link}" target="_blank">{track1["track"]["name"]}</a>,
@@ -90,36 +155,37 @@ async def split():
                                 :spotify: <a href="{link2}" target="_blank">{track2["track"]["name"]}</a>,
                                 :isrc: {track2["isrc"]}
                                 """
-                elif track1["isrc"] == track2["isrc"] and track1["commontrack_id"] == track2["commontrack_id"]:
-                    message = "Can not be splitted as they have the Same ISRC"
+                        elif track1["isrc"] == track2["isrc"] and track1["commontrack_id"] == track2["commontrack_id"]:
+                            message = "Can not be splitted as they have the Same ISRC"
+                        else:
+                            message = "They have different Pages"
+                    except:
+                        return render_template('split.html', error="Something went wrong")
+
+                    return render_template('split.html', split_result={"track1": track1, "track2": track2}, message=message)
                 else:
-                    message=  "They have different Pages"
-            except:
-                return render_template('split.html', error = "Something went wrong")
-            
-            return render_template('split.html', split_result ={"track1":track1, "track2":track2}
-                                    ,message = message)
-        else: 
-            return render_template('split.html', error= "Wrong Spotify Link")
-        
+                    return render_template('split.html', error="Wrong Spotify Link")
+
     else:
         return render_template('split.html')
+
 
 @app.route('/spotify', methods=['GET'])
 def isrc():
     link = request.args.get('link')
     if link:
-        match = re.search(r'open.spotify.com', link) and re.search(r'track|album', link)
+        match = re.search(r'open.spotify.com', link) and re.search(
+            r'track|album', link)
         if match:
-            return render_template('isrc.html', tracks_data= sp.get_isrc(link))
-        
+            return render_template('isrc.html', tracks_data=sp.get_isrc(link))
+
         else:
             # the link is an isrc code
             if len(link) == 12:
-                #search by isrc
-                return render_template('isrc.html', tracks_data= sp.search_by_isrc(link))
-            return render_template('isrc.html', tracks_data= ["Wrong Spotify Link"])
-    else: 
+                # search by isrc
+                return render_template('isrc.html', tracks_data=sp.search_by_isrc(link))
+            return render_template('isrc.html', tracks_data=["Wrong Spotify Link"])
+    else:
         return render_template('isrc.html')
 
 
@@ -127,42 +193,80 @@ def isrc():
 async def setAPI():
     key = request.args.get('key')
     delete = request.args.get("delete_key")
+
+    # Get the existing token from the cookie
+    token = request.cookies.get('api_token')
+    if token:
+        payload = verify_token(token)
+        if payload:
+            key = payload.get("mxm-key")
+            censored_key = '*' * len(key) if key else None
+
+            # Check if the token has expired or is about to expire within 5 minutes
+            current_time = datetime.datetime.now()
+            expiration_time = datetime.datetime.fromtimestamp(
+                payload.get("exp"))
+            if (expiration_time - current_time).total_seconds() <= 300:
+                # Generate a new token with updated expiration time
+                payload["exp"] = int(
+                    (current_time + datetime.timedelta(hours=1)).timestamp())
+                new_token = generate_token(payload)
+                resp = make_response(render_template(
+                    "api.html", key=censored_key))
+                expire_date = current_time + datetime.timedelta(hours=1)
+                resp.set_cookie("api_token", new_token, expires=expire_date)
+                return resp
+
+            return render_template("api.html", key=censored_key)
+
     if key:
         # check the key
         client.start_session()
         mxm = MXM(key, session=client.get_session())
         sp_data = [{"isrc": "DGA072332812", "image": None}]
+
+        # Call the Tracks_Data method with the appropriate parameters
         mxmLinks = await mxm.Tracks_Data(sp_data)
-        client.close_session()
+        print(mxmLinks)
+        await client.close_session()
+
         if isinstance(mxmLinks[0], str):
             return render_template("api.html", error="Please Enter A Valid Key")
-        censored_key = '*' * len(key) 
-        resp = make_response(render_template("api.html", key=censored_key))
-        expire_date = datetime.datetime.now() + datetime.timedelta(days=360)
-        resp.set_cookie("api_key", key, expires=expire_date)
+
+        payload = {"mxm-key": key, "exp": int(
+            (datetime.datetime.now() + datetime.timedelta(hours=1)).timestamp())}
+        token = generate_token(payload)
+
+        resp = make_response(render_template(
+            "api.html", key="Token Generated"))
+        expire_date = datetime.datetime.now() + datetime.timedelta(hours=1)
+        resp.set_cookie("api_token", token, expires=expire_date)
         return resp
+
     elif delete:
         resp = make_response(render_template("api.html"))
-        resp.delete_cookie("api_key")
+        resp.delete_cookie("api_token")
         return resp
+
     else:
-        key = request.cookies.get('api_key')
-        censored_key = '*' * len(key) if key else None 
-        print(censored_key)
-        if key:
-            return render_template("api.html", key=censored_key)
-        return render_template("api.html", key=censored_key)
+        return render_template("api.html", key=None)
+
 
 @app.route('/mxm', methods=['GET'])
 async def mxm_to_sp():
-    key = request.cookies.get("api_key",None)
     link = request.args.get('link')
     if link:
-        client.start_session()
-        mxm = MXM(key,session=client.get_session())
-        album = await mxm.album_sp_id(link)
-        await client.close_session()
-        return render_template("mxm.html", album = album.get("album"), error = album.get("error"))        
+        token = request.cookies.get('api_token')
+        if token:
+            payload = verify_token(token)
+            if payload:
+                key = payload.get("mxm-key")
+
+                client.start_session()
+                mxm = MXM(key, session=client.get_session())
+                album = await mxm.album_sp_id(link)
+                await client.close_session()
+                return render_template("mxm.html", album=album.get("album"), error=album.get("error"))
     else:
         return render_template("mxm.html")
 
@@ -172,5 +276,4 @@ if __name__ == '__main__':
     from hypercorn.config import Config
     from hypercorn.asyncio import serve
     asyncio.run(serve(app, Config()))
-    #app.run(debug=True)
-    
+    # app.run(debug=True)
