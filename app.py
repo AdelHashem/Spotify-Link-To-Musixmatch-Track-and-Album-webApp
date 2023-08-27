@@ -93,7 +93,7 @@ sp = Spotify()
 async def index():
     if request.cookies.get('api_key'):
         payload = {"mxm-key": request.cookies.get('api_key'), "exp": int(
-            (datetime.datetime.now() + datetime.timedelta(hours=1)).timestamp())}
+            (datetime.datetime.now() + datetime.timedelta(days=3)).timestamp())}
         token = generate_token(payload)
 
         resp = make_response(render_template(
@@ -106,8 +106,8 @@ async def index():
 
     link = request.args.get('link')
     key = None
+    token = request.cookies.get('api_token')
     if link:
-        token = request.cookies.get('api_token')
         if token:
             payload = verify_token(token)
             if payload:
@@ -133,6 +133,14 @@ async def index():
         await client.close_session()
 
         return render_template('index.html', tracks_data=mxmLinks)
+
+    # refresh the token every time the user enter the site
+    if token:
+        payload = verify_token(token)
+        resp = make_response(render_template(
+            "index.html"))
+        resp = jwt_ref(resp,payload)
+        return resp
 
     return render_template('index.html')
 
@@ -225,22 +233,12 @@ async def setAPI():
             key = payload.get("mxm-key")
             censored_key = '*' * len(key) if key else None
 
-            # Check if the token has expired or is about to expire within 5 minutes
-            current_time = datetime.datetime.now()
-            expiration_time = datetime.datetime.fromtimestamp(
-                payload.get("exp"))
-            if (expiration_time - current_time).total_seconds() <= 300:
-                # Generate a new token with updated expiration time
-                payload["exp"] = int(
-                    (current_time + datetime.timedelta(hours=1)).timestamp())
-                new_token = generate_token(payload)
-                resp = make_response(render_template(
+            # refresh the token each time the user enter the "/api"
+            resp = make_response(render_template(
                     "api.html", key=censored_key))
-                expire_date = current_time + datetime.timedelta(hours=1)
-                resp.set_cookie("api_token", new_token, expires=expire_date)
-                return resp
+            resp = jwt_ref(resp,payload)
+            return resp
 
-            return render_template("api.html", key=censored_key)
 
     if key:
         # check the key
