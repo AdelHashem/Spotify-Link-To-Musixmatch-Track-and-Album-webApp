@@ -50,6 +50,15 @@ def verify_token(token):
     payload = json.loads(payload)
     return payload
 
+def jwt_ref(resp,payload):
+    current_time = datetime.datetime.now()
+    payload["exp"] = int(
+        (current_time + datetime.timedelta(days=3)).timestamp())
+    new_token = generate_token(payload)
+    expire_date = current_time + datetime.timedelta(days=3)
+    resp.set_cookie("api_token", new_token, expires=expire_date)
+    return resp
+
 
 class StartAiohttp:
     session = None
