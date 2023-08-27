@@ -82,6 +82,19 @@ sp = Spotify()
 
 @app.route('/', methods=['GET'])
 async def index():
+    if request.cookies.get('api_key'):
+        payload = {"mxm-key": request.cookies.get('api_key'), "exp": int(
+            (datetime.datetime.now() + datetime.timedelta(hours=1)).timestamp())}
+        token = generate_token(payload)
+
+        resp = make_response(render_template(
+            "index.html"))
+        expire_date = datetime.datetime.now() + datetime.timedelta(hours=1)
+        resp.delete_cookie("api_key")
+        resp.set_cookie("api_token", token, expires=expire_date)
+        return resp
+
+
     link = request.args.get('link')
     key = None
     if link:
