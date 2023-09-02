@@ -3,9 +3,6 @@
     A Web Application that connects Musixmatch with Spotify
     <br />
 
-- Get Musixmatch track page, album page &amp; ID from A Spotify Track using their free APIs
-- We Can try to import New Released songs now.
-- 
  ## Domains
 - [Vercel](https://spotify-to-mxm.vercel.app/)
 - [Render](https://spotify-to-mxm.onrender.com/)
