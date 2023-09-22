@@ -3,3 +3,9 @@
 .flaskenv
 .vscode/
 key.json
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/misc.xml
+.idea/Spotify-Link-To-Musixmatch-Track-and-Album-webApp.iml
+.idea/vcs.xml
+.idea/modules.xml
+.env
