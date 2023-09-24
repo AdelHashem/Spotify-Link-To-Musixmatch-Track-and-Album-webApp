@@ -7,13 +7,10 @@ from pathlib import Path
 
 class Spotify:
     def __init__(self, client_id=None, client_secret=None) -> None:
-        client_id = '98f6ee799f4d46008edb82289d0ce244'
-        client_secret = 'dc44e1ba119f43149a141e584e3419fe'
-
         cred = SpotifyClientCredentials()
         self.sp = spotipy.Spotify(client_credentials_manager=cred,retries= 3 )
 
-        # self.session = requests.Session()
+        self.session = requests.Session()
         # if client_id is not None:
         # self.ChangeAuth(self, client_id, client_secret)
 
@@ -34,6 +31,10 @@ class Spotify:
     def get_isrc(self, link):
         isrcs = []
         track = None
+        match =re.search(r'spotify.link/\w+', link)
+        if match:
+            link = self.session.get(link).url
+
         match = re.search(r'album/(\w+)', link)
         if match:
             tracks = self.get_album_tarck(match.group(1))
