@@ -21,3 +21,4 @@
 - Get Connected Sources for a Musixmatch Track or Album link
 - Check If 2 tracks share the same page in Musixmatch can be splitted or not
 - Ability to use privite API for Musixmatch
+- Handle normal Spotify links and the short one
