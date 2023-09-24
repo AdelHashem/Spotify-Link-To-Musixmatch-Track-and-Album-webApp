@@ -110,10 +110,10 @@ class MXM:
                     track_album = re.sub(r'[()-.]', '', track.get("album_name"))
                     if (matcher.get("album_name") == sp_data[i]["track"]["album"]["name"]
                       and matcher.get("track_name") == sp_data[i]["track"]["name"]
-                      or jellyfish.jaro_distance(matcher_title.lower(), sp_title.lower())
-                       * jellyfish.jaro_distance(matcher_album.lower(), sp_album.lower())  >=
-                         jellyfish.jaro_distance(track_title.lower(), sp_title.lower())
-                       * jellyfish.jaro_distance(track_album.lower(), sp_album.lower()) ):
+                      or jellyfish.jaro_similarity(matcher_title.lower(), sp_title.lower())
+                       * jellyfish.jaro_similarity(matcher_album.lower(), sp_album.lower())  >=
+                         jellyfish.jaro_similarity(track_title.lower(), sp_title.lower())
+                       * jellyfish.jaro_similarity(track_album.lower(), sp_album.lower()) ):
                         matcher["note"] = f'''This track may having two pages with the same ISRC,
                         the other <a class="card-link" href="{track["track_share_url"]}" target="_blank"
                         >page</a> from <a class="card-link" href="https://www.musixmatch.com/album/{(track["album_id"])}" target="_blank"
