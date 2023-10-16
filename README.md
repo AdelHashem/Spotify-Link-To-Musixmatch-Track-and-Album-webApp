@@ -15,10 +15,10 @@
 
 ## Features 
 - Get links to Musixmatch from Spotify Link
-- Get Musixmatch track page form ISRC code
-- Get ISRC codes and avaliable markets for Spotify track or Album
-- Get Spotify link from ISRC code
+- Get the Musixmatch track page from the ISRC code
+- Get ISRC codes and available markets for Spotify tracks or Album
+- Get the Spotify link from the ISRC code
 - Get Connected Sources for a Musixmatch Track or Album link
-- Check If 2 tracks share the same page in Musixmatch can be splitted or not
-- Ability to use privite API for Musixmatch
+- Check If 2 tracks share the same page in Musixmatch can be split or not
+- Ability to use private API for Musixmatch
 - Handle normal Spotify links and the short one
