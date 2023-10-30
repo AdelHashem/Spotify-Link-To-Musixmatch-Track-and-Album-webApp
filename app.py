@@ -261,7 +261,7 @@ async def setAPI():
         resp = make_response(render_template(
             "api.html", key="Token Generated"))
         expire_date = datetime.datetime.now() + datetime.timedelta(hours=1)
-        resp.set_cookie("api_token", token, expires=expire_date)
+        resp.set_cookie("api_token", token.decode('utf-8'), expires=expire_date)
         return resp
 
     elif delete:
