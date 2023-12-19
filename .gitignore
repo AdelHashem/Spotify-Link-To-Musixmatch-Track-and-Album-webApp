@@ -9,3 +9,5 @@ key.json
 .idea/vcs.xml
 .idea/modules.xml
 .env
+*.ipynb
+app.log
