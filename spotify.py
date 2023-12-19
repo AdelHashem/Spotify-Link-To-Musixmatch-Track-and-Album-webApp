@@ -2,17 +2,22 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import re
 import requests
-from pathlib import Path
 import redis
 from os import environ
 import logging
 
 class Spotify:
     def __init__(self, client_id=None, client_secret=None) -> None:
-        self.RRAuth()
+        self.client_id = client_id if client_id else environ.get("SPOTIPY_CLIENT_ID")
+        self.client_secret = client_secret if client_secret else environ.get("SPOTIPY_CLIENT_SECRET")
+        print(self.client_secret)
+        if not (self.client_id and self.client_secret):
+            self.RRAuth()
+        else:
+            cred = SpotifyClientCredentials(self.client_id, self.client_secret)
+            self.sp = spotipy.Spotify(client_credentials_manager=cred,retries= 3 )
         self.session = requests.Session()
         # if client_id is not None:
-        # self.ChangeAuth(self, client_id, client_secret)
 
     def RRAuth(self):
         r = redis.Redis(
@@ -25,7 +30,7 @@ class Spotify:
         cred = doc["cred"][doc["rr"]]
         logging.info(f"Spotify Cred: {cred}")
         r.json().set("spotify","$.rr",(doc["rr"]+1)%len(doc["cred"]))
-
+        r.close()
         cred = SpotifyClientCredentials(cred[0], cred[1])
         self.sp = spotipy.Spotify(client_credentials_manager=cred,retries= 3 )
 
@@ -40,7 +45,8 @@ class Spotify:
         return self.sp.tracks(ids)["tracks"]
 
     def get_isrc(self, link):
-        self.RRAuth()
+        if not (self.client_id and self.client_secret):
+            self.RRAuth()
         isrcs = []
         track = None
         match =re.search(r'spotify.link/\w+', link)
