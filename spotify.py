@@ -3,20 +3,31 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import re
 import requests
 from pathlib import Path
-
+import redis
+from os import environ
+import logging
 
 class Spotify:
     def __init__(self, client_id=None, client_secret=None) -> None:
-        cred = SpotifyClientCredentials()
-        self.sp = spotipy.Spotify(client_credentials_manager=cred,retries= 3 )
-
+        self.RRAuth()
         self.session = requests.Session()
         # if client_id is not None:
         # self.ChangeAuth(self, client_id, client_secret)
 
-    def ChangeAuth(self, client_id, client_secret):
-        cred = SpotifyClientCredentials(client_id, client_secret)
-        self.sp = spotipy.Spotify(client_credentials_manager=cred)
+    def RRAuth(self):
+        r = redis.Redis(
+        host=environ.get("REDIS_HOST"),
+        port=environ.get("REDIS_PORT"),
+        password=environ.get("REDIS_PASSWD"))
+
+        doc = r.json().get("spotify","$")
+        doc = doc[0]
+        cred = doc["cred"][doc["rr"]]
+        logging.info(f"Spotify Cred: {cred}")
+        r.json().set("spotify","$.rr",(doc["rr"]+1)%len(doc["cred"]))
+
+        cred = SpotifyClientCredentials(cred[0], cred[1])
+        self.sp = spotipy.Spotify(client_credentials_manager=cred,retries= 3 )
 
     def get_tarck(self, link=None, track=None) -> dict:
         if link is not None: track = self.get_spotify_id(link)
@@ -29,6 +40,7 @@ class Spotify:
         return self.sp.tracks(ids)["tracks"]
 
     def get_isrc(self, link):
+        self.RRAuth()
         isrcs = []
         track = None
         match =re.search(r'spotify.link/\w+', link)
@@ -60,7 +72,7 @@ class Spotify:
 
         else:
             track = self.get_tarck(link, track)
-            print(track)
+            print(link)
             if "external_ids" in track:
                 img = track["album"]["images"][1]["url"]
                 isrcs.append({"isrc": track["external_ids"]["isrc"], "image": img, "track": track})

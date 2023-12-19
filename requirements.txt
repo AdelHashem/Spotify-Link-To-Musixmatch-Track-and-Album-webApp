@@ -14,3 +14,4 @@ Werkzeug
 zipp==3.10.0
 asgiref
 jellyfish
+redis[hiredis]

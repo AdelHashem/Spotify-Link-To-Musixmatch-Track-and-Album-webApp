@@ -64,7 +64,7 @@ class Musixmatch(object):
 
         while retries < self.max_retries:
             try:
-                print(params)
+                #print(params)
                 async with self._session.request(method=method, url=str(url), params = params) as response:
                     
                     response.raise_for_status()
