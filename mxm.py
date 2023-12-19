@@ -4,7 +4,7 @@ import jellyfish
 import Asyncmxm 
 import asyncio
 from urllib.parse import unquote
-
+import redis
 
 class MXM:
     DEFAULT_KEY = os.environ.get("MXM_API")
@@ -12,7 +12,20 @@ class MXM:
 
     def __init__(self, key=None, session=None):
         self.key = key or self.DEFAULT_KEY
-        self.key2 = key or self.DEFAULT_KEY2
+        self.key2 = key or self.DEFAULT_KEY2 
+        if not self.key:
+            r = redis.Redis(
+            host=os.environ.get("REDIS_HOST"),
+            port=os.environ.get("REDIS_PORT"),
+            password=os.environ.get("REDIS_PASSWD"))
+            key1 = r.get("live:1")
+            key2 = r.get("live:2")
+            self.key = key1.decode()
+            self.key2 = key2.decode()
+            print(self.key," ", self.key2)
+            r.close()
+
+
         self.session = session
         self.musixmatch = Asyncmxm.Musixmatch(self.key,requests_session=session)
         self.musixmatch2 = Asyncmxm.Musixmatch(self.key2,requests_session=session)
