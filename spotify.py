@@ -10,7 +10,6 @@ class Spotify:
     def __init__(self, client_id=None, client_secret=None) -> None:
         self.client_id = client_id if client_id else environ.get("SPOTIPY_CLIENT_ID")
         self.client_secret = client_secret if client_secret else environ.get("SPOTIPY_CLIENT_SECRET")
-        print(self.client_secret)
         if not (self.client_id and self.client_secret):
             self.RRAuth()
         else:
