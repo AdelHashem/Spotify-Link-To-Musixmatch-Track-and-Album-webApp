@@ -89,7 +89,7 @@
                 <p class="card-text">
                   Album:
                   <a
-                    href="https://www.musixmatch.com/album/{{ track.matcher_album[0] }}"
+                    href="https://www.musixmatch.com/album/{{ track.artist_id }}/{{ track.matcher_album[0] }}"
                     class="card-link"
                     target="_blank"
                     >{{ track.matcher_album[1] }}</a
@@ -99,7 +99,7 @@
                 <p class="card-text">
                   Album:
                   <a
-                    href="https://www.musixmatch.com/album/{{ track.album_id }}"
+                    href="https://www.musixmatch.com/album/{{ track.artist_id }}/{{ track.album_id }}"
                     class="card-link"
                     target="_blank"
                     >{{ track.album_name }}</a
