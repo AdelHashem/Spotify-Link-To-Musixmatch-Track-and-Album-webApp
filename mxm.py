@@ -129,14 +129,14 @@ class MXM:
                        * jellyfish.jaro_similarity(track_album.lower(), sp_album.lower()) ):
                         matcher["note"] = f'''This track may having two pages with the same ISRC,
                         the other <a class="card-link" href="{track["track_share_url"]}" target="_blank"
-                        >page</a> from <a class="card-link" href="https://www.musixmatch.com/album/{(track["album_id"])}" target="_blank"
+                        >page</a> from <a class="card-link" href="https://www.musixmatch.com/album/{(track["artist_id"])}/{(track["album_id"])}" target="_blank"
                         >album</a>.'''
                         links.append(matcher)
                     else:
 
                         track["note"] = f'''This track may be facing an ISRC issue
                         as the Spotify ID is connected to another <a class="card-link" href="{matcher["track_share_url"]}" target="_blank"
-                        >page</a> from <a class="card-link" href="https://www.musixmatch.com/album/{(matcher["album_id"])}" target="_blank"
+                        >page</a> from <a class="card-link" href="https://www.musixmatch.com/album/{(track["artist_id"])}/{(matcher["album_id"])}" target="_blank"
                         >album</a>.'''
                         links.append(track)
                 continue
