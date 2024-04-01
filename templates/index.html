@@ -89,7 +89,7 @@
                 <p class="card-text">
                   Album:
                   <a
-                    href="https://www.musixmatch.com/album/{{ track.matcher_album[0] }}"
+                    href="https://www.musixmatch.com/album/{{ track.artist_id }}/{{ track.matcher_album[0] }}"
                     class="card-link"
                     target="_blank"
                     >{{ track.matcher_album[1] }}</a
@@ -99,7 +99,7 @@
                 <p class="card-text">
                   Album:
                   <a
-                    href="https://www.musixmatch.com/album/{{ track.album_id }}"
+                    href="https://www.musixmatch.com/album/{{ track.artist_id }}/{{ track.album_id }}"
                     class="card-link"
                     target="_blank"
                     >{{ track.album_name }}</a
@@ -189,8 +189,7 @@ elHashem/Spotify-Link-To-Musixmatch-Track-and-Album-webApp"
       <div class="note">
         <span class="close" id="closenote">&times;</span>
         <p class="note-text">
-          Now, the app is capable of automatically attempting to import a new
-          release song or album if it has not been imported yet
+          Importing new release songs now works, but it may take some additional time.
         </p>
       </div>
       <div class="modal">

@@ -56,7 +56,7 @@ def jwt_ref(resp,payload):
         (current_time + datetime.timedelta(days=3)).timestamp())
     new_token = generate_token(payload)
     expire_date = current_time + datetime.timedelta(days=3)
-    resp.set_cookie("api_token", new_token, expires=expire_date)
+    resp.set_cookie("api_token", new_token.decode('utf-8'), expires=expire_date)
     return resp
 
 
@@ -261,7 +261,7 @@ async def setAPI():
         resp = make_response(render_template(
             "api.html", key="Token Generated"))
         expire_date = datetime.datetime.now() + datetime.timedelta(hours=1)
-        resp.set_cookie("api_token", token, expires=expire_date)
+        resp.set_cookie("api_token", token.decode('utf-8'), expires=expire_date)
         return resp
 
     elif delete:
