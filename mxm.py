@@ -63,7 +63,7 @@ class MXM:
             track = track["message"]["body"]["track"]
             track["isrc"] = sp_data["isrc"]
             track["image"] = sp_data["image"]
-            track["beta"] = str(track["track_share_url"]).replace("www.","beta.",1)
+            track["beta"] = str(track["track_share_url"]).replace("www.","com-beta.",1)
             
             return track
         else:
