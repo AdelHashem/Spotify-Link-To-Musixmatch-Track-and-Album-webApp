@@ -1,15 +1,15 @@
+import re
+import json
+import datetime
+import base64
+import hmac
+import hashlib
+import os
+import aiohttp
 from flask import Flask, request, render_template, make_response
 from asgiref.wsgi import WsgiToAsgi
 from mxm import MXM
 from spotify import Spotify
-import re
-import aiohttp
-import datetime
-import base64
-import hmac
-import json
-import hashlib
-import os
 
 
 secret_key_value = os.environ.get("secret_key")
@@ -273,7 +273,6 @@ async def setAPI():
         return render_template("api.html", key=None)
 
 
-
 @app.route('/mxm', methods=['GET'])
 async def mxm_to_sp():
     link = request.args.get('link')
@@ -292,6 +291,28 @@ async def mxm_to_sp():
         return render_template("mxm.html", album=album.get("album"), error=album.get("error"))
     else:
         return render_template("mxm.html")
+    
+@app.route('/abstrack', methods=['GET'])
+async def abstrack() -> str:
+    """ Get the track data from the abstract track """
+    id = request.args.get('id')
+    key = None
+    if id:
+        token = request.cookies.get('api_token')
+        if token:
+            payload = verify_token(token)
+            if payload:
+                key = payload.get("mxm-key")
+        if not re.match("^[0-9]+$",id):
+            return render_template("abstrack.html", error = "Invalid input!")
+        client.start_session()
+        mxm = MXM(key, session=client.get_session())
+        track, album = await mxm.abstrack(id)
+        await client.close_session()
+        return render_template("abstrack.html", track=track, album= album, error=track.get("error"))
+    else:
+        return render_template("abstrack.html")
+
 
 asgi_app = WsgiToAsgi(app)
 if __name__ == '__main__':

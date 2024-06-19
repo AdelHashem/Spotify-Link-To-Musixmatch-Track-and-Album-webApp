@@ -19,10 +19,18 @@ form.addEventListener("submit", (event) => {
     return Promise.resolve(); // Resolve with a void value
   }
 
-  window.location.href =
+  if (window.location.pathname === "/abstrack") { 
+    window.location.href =
+    window.location.href.split("?")[0] +
+    "?id=" +
+    encodeURIComponent(inputLink);
+  }else{
+    window.location.href =
     window.location.href.split("?")[0] +
     "?link=" +
     encodeURIComponent(inputLink);
+  }
+  
 });
 
 // Get the how-to-use link and modal elements

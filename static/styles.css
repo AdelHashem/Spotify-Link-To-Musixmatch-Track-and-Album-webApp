@@ -395,9 +395,9 @@ td:last-child {
 .navbar a {
   text-decoration: none;
   color: #fff;
-  font-size: 1.1em;
+  font-size: 1.03em;
   font-weight: bold;
-  padding: 10px 15px;
+  padding: 5px 5px;
   border-radius: 5px;
   transition: background-color 0.3s ease;
 }
