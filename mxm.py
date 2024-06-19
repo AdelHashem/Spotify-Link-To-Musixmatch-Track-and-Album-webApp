@@ -193,4 +193,15 @@ class MXM:
                 return {"error": str(e)}
         else:
             return {"error": "Unsupported link."}
-        
+
+    async def abstrack(self, id : int) -> tuple[dict,dict]:
+        """Get the track and the album data from the abstrack."""
+        try:
+            track = await self.musixmatch.track_get(commontrack_id=id)
+            track = track["message"]["body"]["track"]
+            album = await self.musixmatch.album_get(track["album_id"])
+            album = album["message"]["body"]["album"]
+            return track, album
+        except Asyncmxm.exceptions.MXMException as e:
+            return {"error": str(e)}, {"error": str(e)}
+           
