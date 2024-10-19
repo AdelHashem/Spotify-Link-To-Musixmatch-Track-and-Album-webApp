@@ -123,7 +123,7 @@
                     <ul>
                       {% for id in album.external_ids.spotify %}
                       <li>
-                        <a href="https://open.spotify.com/album/{{ id }}" class="card-link" target="_blank">{{ id }}</a>
+                        <a href="https://open.spotify.com/album/{{ id }}" class="card-link" target="_blank">{{ id }}</a> (<a href="https://sp-markets.pages.dev/album/{{ id }}" class="card-link" target="_blank">Check Market Availability</a>)
                       </li>
                       {% endfor %}
                     </ul>
